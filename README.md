@@ -2,7 +2,7 @@
 
 A version of Ben Marwick's **Time Schedule Viz** bookmarklet ([uw-anthro-web-helpers](https://github.com/benmarwick/uw-anthro-web-helpers)) for the UW Time Schedule. It adds registration snapshots and a TA estimate. Everything else works as in Ben's dashboard, and his README explains how to use it.
 
-**Status: private, in testing.**
+**Status: in testing.**
 
 ## What TSMod adds
 
@@ -25,9 +25,31 @@ A version of Ben Marwick's **Time Schedule Viz** bookmarklet ([uw-anthro-web-hel
 
 ## Install
 
+A [bookmarklet](https://en.wikipedia.org/wiki/Bookmarklet) is a bookmark stored in your web browser that contains JavaScript commands that make the browser do useful work. This one only works on the UW Time Schedule, which requires UW credentials.
+
+1. In Chrome, open **Bookmarks → Bookmark Manager**.
+2. Click the **⋮** menu at the very top right of that page (not the one beside your profile icon), then **Add new bookmark**.
+3. For the name, use `TimeScheduleMod`.
+4. Paste the script below into the URL field, then click **Save**.
+
+#### Script for the bookmarklet:
+
+```
+javascript:(function(){
+  var s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/gh/ischnee/TimeScheduleMod@main/bookmarklet-timeschedulemod.js?t=' + Date.now();
+  s.onload = function() { console.log('[Bookmarklet] Script loaded'); };
+  s.onerror = function() { console.error('[Bookmarklet] Failed to load script'); };
+  document.body.appendChild(s);
+})();
+```
+
+This short script loads the latest TimeScheduleMod from this repository each time you click it, so you never need to reinstall it to get updates.
+
+**Prefer a fixed copy that doesn't update itself?**
 1. Download `TimeScheduleMod.html` from this repository.
-2. In Chrome, open **Bookmarks → Bookmark Manager**, then the **⋮** menu at the top right of that page, then **Import bookmarks**, and pick the file.
-3. A **TimeScheduleMod** bookmark appears. To update later, delete it and import a newer file.
+2. Import it in Chrome: Bookmark Manager → **⋮** → **Import bookmarks**.
+3. To update later, delete that bookmark and import a newer copy.
 
 ## How to use
 
@@ -59,6 +81,10 @@ A version of Ben Marwick's **Time Schedule Viz** bookmarklet ([uw-anthro-web-hel
   node --experimental-websocket test/run.js
   ```
   The tests need Google Chrome and Node 20 or later. They run the dashboard in headless Chrome against a fake PHIL Time Schedule (`test/fake-time-schedule.js`), in which every name and number is invented.
+- **Every push reaches every user.** Everyone using the loader runs whatever is on `main` the next time they click. Keep write access to people who need it, and protect those GitHub accounts with two-factor authentication.
+- **Send updates out right away.** jsDelivr keeps a copy of the file on its servers for up to 12 hours. About a minute after pushing, open `https://purge.jsdelivr.net/gh/ischnee/TimeScheduleMod@main/bookmarklet-timeschedulemod.js` once, and everyone gets the new version on their next click.
+  - Wait the minute: purging in the first seconds after a push can put the old version straight back, before GitHub reports the new one.
+  - The loader's timestamp (`?t=…`) stops browsers from reusing an old copy.
 - **Taking Ben's updates:** replace `ben-original.js` with his latest `bookmarklet-time-schedule-viz-generic.js`, then rebuild and test. `build.py` stops with an error if a place it changes has moved.
 
 ## Credit and license
