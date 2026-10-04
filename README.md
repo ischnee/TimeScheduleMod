@@ -100,6 +100,24 @@ This short script loads the latest TimeScheduleMod from this repository each tim
   - The loader's timestamp (`?t=…`) stops browsers from reusing an old copy.
 - **Taking Ben's updates:** replace `ben-original.js` with his latest `bookmarklet-time-schedule-viz-generic.js`, then rebuild and test. `build.py` stops with an error if a place it changes has moved.
 
+## Screenshots (made-up data)
+
+The header's views, and a course excluded everywhere:
+
+![The header and the Excluded bar](screenshots/1-quarter-header.png)
+
+**Year:** the year's totals, then each quarter with its Enrolled vs Capacity chart:
+
+![Year view](screenshots/2-year.png)
+
+**Decade:** ten academic years, quarter by quarter, with each year's totals:
+
+![Decade view](screenshots/3-decade.png)
+
+**AY time series:** chosen courses over ten years, including one last taught in 2019:
+
+![AY time series](screenshots/4-ay-time-series.png)
+
 ## Credit and license
 
 TimeScheduleMod is built on **Time Schedule Viz** by [Ben Marwick](https://faculty.washington.edu/bmarwick/) (UW Anthropology), used under the MIT license. See [LICENSE](LICENSE), which keeps his copyright and permission notice.
