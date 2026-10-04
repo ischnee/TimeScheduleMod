@@ -61,3 +61,41 @@ function page(quarter, shift) {
 }
 page.QUIZ = QUIZ; page.courses = courses; page.names = names;
 module.exports = page;
+
+/* A made-up CLAS department with a page for every quarter from Autumn 2016 to Autumn 2026 (Winter and Spring 2027 aren't
+   published yet), for the Year, Decade and Summers views. Every name and number is invented.
+   clas.sections(quarter) gives each lecture section, so the tests can add up what each view should show:
+   - CLAS 101 A (lim 100), with four quiz sections led by two TAs (two each): 2 TAs every quarter but summer.
+   - CLAS 210 A (lim 120) and CLAS 320 A (lim 40).
+   - CLAS 484 A and B: independent study, "to be arranged", 1-5 credits, limit 5.
+   - Summer: CLAS 101 A (lim 40, no quiz sections) and CLAS 484 A.
+   Enrollments vary by quarter: i counts quarters from Autumn 2016. */
+const CLAS_FIRST = 2016 * 4 + 3, QN = { WIN: 0, SPR: 1, SUM: 2, AUT: 3 };
+function clasIndex(quarter) { return +quarter.slice(3) * 4 + QN[quarter.slice(0, 3)] - CLAS_FIRST; }
+function clasSections(quarter) {
+  const i = clasIndex(quarter);
+  if (i < 0 || i > clasIndex('AUT2026')) return null;
+  const tba = (sec, enrl) => ({ number: '484', name: 'INDEPENDENT READINGS', sec, cred: '1-5', meets: 'to be arranged', enrl, lim: 5, who: 'Instructor,Pi' });
+  if (quarter.startsWith('SUM')) return [
+    { number: '101', name: 'LATIN AND GREEK IN CURRENT USE', sec: 'A', cred: '5', meets: 'MTWTh  1030-1220  DEN  112', enrl: 25 + i % 10, lim: 40, who: 'Instructor,Rho' },
+    tba('A', 1)];
+  return [
+    { number: '101', name: 'LATIN AND GREEK IN CURRENT USE', sec: 'A', cred: '5', meets: 'MWF    1030-1120  DEN  112', enrl: 60 + (i * 7) % 40, lim: 100, who: 'Instructor,Rho', quizzes: [['Ivy', 24], ['Ivy', 22], ['Oak', 20], ['Oak', 18]] },
+    { number: '210', name: 'GREEK AND ROMAN MYTHOLOGY', sec: 'A', cred: '5', meets: 'MWF    0130-0220  DEN  211', enrl: 90 + (i * 5) % 30, lim: 120, who: 'Instructor,Sigma' },
+    { number: '320', name: 'GREEK PHILOSOPHY', sec: 'A', cred: '5', meets: 'TTh    1130-1250  DEN  213', enrl: 20 + i % 15, lim: 40, who: 'Instructor,Tau' },
+    tba('A', 1), tba('B', i % 2)];
+}
+function clasPage(quarter) {
+  const secs = clasSections(quarter);
+  if (!secs) return null;
+  let sln = 30000 + clasIndex(quarter) * 20, out = `<html><head><title>CLAS ${quarter}</title></head><body><h1>CLASSICS</h1>`, last = null;
+  secs.forEach(s => {
+    if (s.number !== last) { out += `<br><table><tr><td><A NAME=clas${s.number}>CLAS&nbsp;&nbsp; ${s.number} </A>&nbsp;<A HREF=/course>${s.name}</A> (A&H)</td></tr></table>`; last = s.number; }
+    out += `<table><tr><td><pre><A HREF=/sln>${sln++}</A> ${s.sec}  ${s.cred.padEnd(8)}${s.meets.padEnd(31)}${s.who.padEnd(22)}Open     ${String(s.enrl).padStart(3)}/ ${s.lim}      A&H</pre></td></tr></table>`;
+    (s.quizzes || []).forEach(([leader, qe], q) => {
+      out += `<table><tr><td><pre><A HREF=/sln>${sln++}</A> ${s.sec}${String.fromCharCode(65 + q)} QZ      TTh    0930-1020  DEN  132      ${('Assistant,' + leader).padEnd(22)}Open      ${String(qe).padStart(2)}/ 25</pre></td></tr></table>`;
+    });
+  });
+  return out + '</body></html>';
+}
+page.clas = { page: clasPage, sections: clasSections };

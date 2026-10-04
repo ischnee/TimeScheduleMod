@@ -23,6 +23,8 @@ function startServer() {
     }
     if (req.url === '/__fetches') { res.writeHead(200); return res.end(String(fetches)); }
     if (req.url === '/__signout') { signedOut = !signedOut; res.writeHead(200); return res.end(String(signedOut)); }
+    const c = req.url.match(/^\/students\/timeschd\/([A-Z]{3}\d{4})\/clas\.html$/);
+    if (c) { const html = signedOut ? null : page.clas.page(c[1]); if (html) { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(html); } res.writeHead(404); return res.end('not found'); }
     const m = req.url.match(/^\/students\/timeschd\/([A-Z]{3}\d{4})\/phil\.html$/);
     if (m && m[1] === 'AUT2026') {
       if (signedOut) { res.writeHead(200, { 'content-type': 'text/html' }); return res.end('<html><body><h1>Sign in</h1><form></form></body></html>'); }

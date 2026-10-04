@@ -10,7 +10,7 @@ module.exports = async (check, port) => {
     await d.openEmpty();
     check('Save disabled before any prefix', await d.evaluate('$("#snap-save").prop("disabled")'));
     await d.openWithPhil();
-    check('data time shown', /^Data as of \d/.test(await d.evaluate('$("#snap-asof").text()')));
+    check("data time shown inside Save snapshot", / · as of \d/.test(await d.evaluate('$("#snap-asof").text()')));
     await d.click('.gened-filter[value="NSc"]');
     await d.click('.level-btn[data-level="100"]');
     await d.click('#course-table thead th:nth-child(7)'); await d.click('#course-table thead th:nth-child(7)');
@@ -38,7 +38,7 @@ module.exports = async (check, port) => {
     check('snapshot banner with the note', /^SNAPSHOTFirst day of classesAutumn 2026 · data as of /.test(view.banner), view.banner);
     check('prefixes locked, no Save, no chip ×', view.locked && !view.save && view.x === 0, view);
     check('tab title names the snapshot', view.title === 'Snapshot AUT2026 PHIL · First day of classes', view.title);
-    await d.click('.switch .slider');
+    await d.click('.view-seg [data-view=series]');
     await d.evaluate('$("#ts-course-select").val(["PHIL|100"]).trigger("change")');
     await d.waitFor('(document.getElementById("chart-timeseries").data || []).length > 0', 40);
     const quarters = await d.evaluate('(document.getElementById("chart-timeseries").data || [])[0].y.filter(v => v !== null).length');

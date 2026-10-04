@@ -73,6 +73,34 @@ CSS = """.snap-tools{margin-left:auto;display:flex;align-items:center;gap:12px}.
 .ta-note{margin:8px 0 0;font-size:12px;color:#777}"""
 
 # The page's source, captured before anything changes it; a saved snapshot carries its data in #tsv-snapshot.
+CSS += """
+.dashboard-header{row-gap:8px}.view-seg{margin-left:auto;display:inline-flex;background:rgba(255,255,255,.12);border-radius:18px;padding:3px;gap:2px}
+.view-seg button{border:0;background:none;color:#e8e3d3;font:600 13px 'Open Sans',Arial,sans-serif;padding:5px 13px;border-radius:15px;cursor:pointer;white-space:nowrap}.view-seg button:hover{color:#fff;background:rgba(255,255,255,.12)}
+.view-seg button.on{background:#fff;color:#4b2e83}.snap-tools{flex-basis:100%;justify-content:flex-end;margin-left:0}.snap-btn .snap-asof{color:#85754d;font-weight:normal;font-size:12px}
+.excl-bar{flex-wrap:wrap;align-items:center;gap:6px 10px;margin:8px 25px 0;padding:8px 14px;background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.05);font-size:13px}.excl-bar[style*=block]{display:flex !important}
+.excl-bar strong{color:#4b2e83;font-size:12px;text-transform:uppercase;letter-spacing:.5px;cursor:help}
+.excl-chip{display:inline-flex;align-items:center;gap:4px;border:1px solid #b9a9e0;border-radius:12px;padding:1px 4px 1px 10px;color:#2e1a5c;font-weight:600}
+.excl-chip button{border:0;background:none;color:#888;font-size:15px;line-height:1;cursor:pointer;padding:0 4px;border-radius:8px}.excl-chip button:hover{color:#b91c1c;background:#f4f0fb}
+.excl-sugg{color:#6b5a2a;background:#fbf6e6;border-radius:12px;padding:3px 6px 3px 12px;cursor:help}.excl-sugg b{color:#3d2f0e}
+.excl-sugg button{margin-left:8px;border:1px solid #85754d;background:#fff;color:#3d2f0e;border-radius:12px;padding:1px 9px;font:600 12px 'Open Sans',Arial,sans-serif;cursor:pointer}.excl-sugg .excl-no{border-color:transparent;background:none;color:#85754d;margin-left:2px}
+#period-view{display:none;margin:15px 25px 25px}.pv-on #period-view{display:block}.pv-on #current-quarter-view .stats-row,.pv-on #current-quarter-view .charts-column,.pv-on #current-quarter-view .table-container{display:none}
+.pv-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px}.pv-head label{font-weight:600;color:#4b2e83;display:flex;align-items:center;gap:8px}.pv-head select{font:inherit;padding:4px 8px;border:1px solid #ccc;border-radius:5px}
+.pv-hint{font-size:13px;color:#777}#pv-progress{display:none;align-items:center;gap:12px;margin:12px 25px 0;font-size:12px;color:#4b2e83}
+.pv-bar{width:240px;height:8px;background:#e8e3f3;border-radius:4px;overflow:hidden}.pv-fill{height:100%;width:0;background:#4b2e83;transition:width .2s}
+.pv-year,.pv-col{background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.05);padding:12px 16px}.pv-year{margin-bottom:15px}
+.pv-year h2,.pv-col h2{margin:0 0 10px;font-size:16px;color:#4b2e83;display:flex;align-items:center;gap:10px}.pv-this{font-size:11px;font-weight:600;color:#85754d;background:#fbf6e6;border-radius:10px;padding:2px 8px;cursor:help}
+.pv-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.pv-cols .pv-cards,.pv-sdetail .pv-cards{grid-template-columns:repeat(3,1fr)}
+.pv-card{border:1px solid #eee;border-radius:6px;padding:7px 10px}.pv-card h3{margin:0;font-size:11px;color:#777;text-transform:uppercase;letter-spacing:.4px;font-weight:600}.pv-card h3 .nc,.pv-card h3 .est{text-transform:none}.pv-card h3 .est{font-weight:normal;color:#999}
+.pv-v{font-size:22px;font-weight:700;color:#4b2e83;margin-top:2px}.pv-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.pv-col.pv-focus{box-shadow:0 0 0 3px #b9a9e0}
+.pv-chart{height:300px;margin-top:8px}.pv-na{color:#999;font-size:13px}.pv-big-na{padding:30px 0;text-align:center}
+.pv-table{width:100%;border-collapse:separate;border-spacing:6px}.pv-table thead th{text-align:left;color:#4b2e83;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding:2px 10px}
+.pv-table th.pv-yr{text-align:left;color:#2e1a5c;font-size:15px;white-space:nowrap;background:#fff;border-radius:6px;padding:10px 14px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.05)}.pv-table th.pv-yr span{display:block;font-size:11px;font-weight:normal;color:#85754d}
+.pv-cell{background:#fff;border-radius:6px;padding:12px 14px;font-size:13px;line-height:1.6;color:#333;vertical-align:top;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.05);height:78px}
+.pv-cell:hover,.pv-table th.pv-yr:hover{box-shadow:0 0 0 2px #b9a9e0}.pv-cell.pv-na{color:#aaa;vertical-align:middle;cursor:default;background:#fafafa}.pc-big b{font-size:20px;color:#2e1a5c}.pv-cell b{color:#2e1a5c}
+.pv-table .pv-tot{border-left:3px solid #e6d9b0}.pv-table tbody td:last-child{box-shadow:inset 3px 0 0 #e6d9b0,0 1px 3px rgba(0,0,0,.05)}.pv-stable tbody td:last-child{box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.pv-summers{display:grid;grid-template-columns:minmax(320px,420px) 1fr;gap:15px;align-items:start}.pv-stable tr.pv-sel .pv-cell,.pv-stable tr.pv-sel th{box-shadow:0 0 0 3px #b9a9e0}
+@media (max-width:1100px){.pv-cols,.pv-summers{grid-template-columns:1fr}.pv-cards{grid-template-columns:repeat(3,1fr)}}"""
+
 START = """
     /* Snapshots: the page's own source, captured before anything changes it, so "Save snapshot" can write a copy of
        this dashboard with its data inside. A saved snapshot carries that data in #tsv-snapshot and never fetches. */
@@ -113,15 +141,17 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
         values.forEach(function(v){ n[v] = (n[v] || 0) + 1; });
         return Object.keys(n).map(Number).sort(function(a, b){ return n[b] - n[a] || Math.abs(a - prefer) - Math.abs(b - prefer) || b - a; })[0];
     }
-    function taEstimate(filtered){
+    /* For the quarter shown by default; Year, Decade and Summers pass another quarter's lectures and quiz sections. */
+    function taEstimate(filtered, lectures, quizzes){
+        lectures = lectures || rawData; quizzes = quizzes || quizData;
         const lectureOf = {}, counted = {}, load = {}, coursesOf = {};
-        rawData.forEach(function(d){ lectureOf[lectureKey(d)] = d; });
+        lectures.forEach(function(d){ lectureOf[lectureKey(d)] = d; });
         filtered.forEach(function(d){ counted[lectureKey(d)] = true; });
-        quizData.forEach(function(q){ if(isTa(q.leader)){ load[q.leader] = (load[q.leader] || 0) + 1; (coursesOf[q.leader] = coursesOf[q.leader] || {})[q.prefix + " " + q.number] = true; } });
+        quizzes.forEach(function(q){ if(isTa(q.leader)){ load[q.leader] = (load[q.leader] || 0) + 1; (coursesOf[q.leader] = coursesOf[q.leader] || {})[q.prefix + " " + q.number] = true; } });
         const loads = Object.keys(load).map(function(k){ return load[k]; });
         const usual = loads.length ? mostCommon(loads, 2) : 2;
         const courses = {}, named = {};
-        quizData.filter(function(q){ return counted[lectureKey(q)]; }).forEach(function(q){
+        quizzes.filter(function(q){ return counted[lectureKey(q)]; }).forEach(function(q){
             const k = q.prefix + " " + q.number, c = courses[k] || (courses[k] = { count: 0, list: [], tas: {}, needs: 0, empty: 0, openSeats: 0, lectures: {} });
             c.count++;
             c.list.push(q);
@@ -220,7 +250,7 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
     function updateAsOf(){
         if(SNAPSHOT) return;
         const t = dataAsOf();
-        $("#snap-asof").text(t ? "Data as of " + fmtWhen(t, !sameDay(t, new Date())) : "")
+        $("#snap-asof").text(t ? " · as of " + fmtWhen(t, !sameDay(t, new Date())) : "")
             .attr("title", t ? "When these numbers were loaded from the Time Schedule" + (activePrefixes.length > 1 ? " (the earliest of your prefixes)" : "") : "");
         $("#snap-save").prop("disabled", activePrefixes.length === 0)
             .attr("title", activePrefixes.length ? "Save this dashboard, with its numbers as of now, as a file you can reopen any time" : "Load a prefix first");
@@ -252,8 +282,8 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
             progress("Fetching history: " + t.hq.str + " " + t.p + " (" + (i + 1) + " of " + tasks.length + ")");
             try {
                 const res = await fetch("https://www.washington.edu/students/timeschd/" + t.hq.str + "/" + prefixLookup[t.p]);
-                tsDataCache[t.key] = res.ok ? parseUWTimeSchedule(await res.text()) : [];
-            } catch(e){ tsDataCache[t.key] = []; }
+                if(res.ok) storeHistoryPage(t.key, await res.text()); else { tsDataCache[t.key] = []; tsQuizCache[t.key] = []; }
+            } catch(e){ tsDataCache[t.key] = []; tsQuizCache[t.key] = []; }
         }
     }
     function snapshotFileName(note, iso){
@@ -265,18 +295,19 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
     /* Everything the dashboard needs to reopen as it is now: the rows, the filters and selections, and (if asked) history. */
     function snapshotData(note, withHistory){
         const shown = function(d){ return activePrefixes.indexOf(d.src) !== -1; };
-        let history = null;
+        let history = null, quizHistory = null;
         if(withHistory){
-            history = {};
-            Object.keys(tsDataCache).forEach(function(k){ const p = k.slice(k.indexOf("_") + 1); if(activePrefixes.indexOf(p) !== -1 && k.indexOf(currQuarterId + "_") !== 0) history[k] = tsDataCache[k]; });
+            history = {}; quizHistory = {};
+            Object.keys(tsDataCache).forEach(function(k){ const p = k.slice(k.indexOf("_") + 1); if(activePrefixes.indexOf(p) !== -1 && k.indexOf(currQuarterId + "_") !== 0){ history[k] = tsDataCache[k]; if(tsQuizCache[k]) quizHistory[k] = tsQuizCache[k]; } });
         }
         const times = {};
         activePrefixes.forEach(function(p){ times[p] = fetchedAt[p]; });
         return { version: 1, note: note, quarter: currQuarterId, dataAsOf: dataAsOf(), savedAt: new Date().toISOString(), prefixes: activePrefixes.slice(), fetchedAt: times,
-            rawData: rawData.filter(shown), quizData: quizData.filter(shown), history: history,
+            rawData: rawData.filter(shown), quizData: quizData.filter(shown), history: history, quizHistory: quizHistory,
             ui: { genEds: $(".gened-filter:checked").map(function(){ return this.value; }).get(), excludedSections: excludedSections.slice(), excludedInstructors: excludedInstructors.slice(),
                 table: dataTable ? { order: dataTable.order(), search: dataTable.search(), length: dataTable.page.len() } : null,
-                timeSeries: $("#ts-toggle").is(":checked"), tsSelected: $("#ts-course-select").val() || [], tsExcludedInstructors: tsExcludedInstructors.slice() } };
+                timeSeries: $("#ts-toggle").is(":checked"), tsSelected: $("#ts-course-select").val() || [], tsExcludedInstructors: tsExcludedInstructors.slice(),
+                excludedCourses: excludedCourses.slice(), view: viewMode, year: pvYear, summer: pvSummer } };
     }
     /* The snapshot file: this page's own source with the data in #tsv-snapshot, and its suggested file name. */
     function snapshotFile(note, withHistory){
@@ -381,6 +412,10 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
         excludedSections = ui.excludedSections || [];
         excludedInstructors = ui.excludedInstructors || [];
         tsExcludedInstructors = ui.tsExcludedInstructors || [];
+        excludedCourses = ui.excludedCourses || [];
+        if(ui.year) pvYear = ui.year;
+        if(ui.summer) pvSummer = ui.summer;
+        Object.assign(tsQuizCache, s.quizHistory || {});
         if(ui.genEds) $(".gened-filter").each(function(){ this.checked = ui.genEds.indexOf(this.value) !== -1; });
         activePrefixes.forEach(function(p){
             tsDataCache[currQuarterId + "_" + p] = rawData.filter(function(d){ return d.prefix === p; });
@@ -401,10 +436,247 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
         const ui = SNAPSHOT.ui || {};
         if(dataTable && ui.table) dataTable.order(ui.table.order || []).search(ui.table.search || "").page.len(ui.table.length || 25).draw();
         if(ui.timeSeries){
-            $("#ts-toggle").prop("checked", true).trigger("change");
+            setView("series");
             if(ui.tsSelected && ui.tsSelected.length) $("#ts-course-select").val(ui.tsSelected).trigger("change");
-        }
+        } else if(ui.view && ui.view !== "quarter") setView(ui.view);
     }
+"""
+
+PERIOD = r"""    /* ---- Year, Decade and Summers ----
+       Other quarters, from the same Time Schedule pages Time Series reads (one shared cache): one academic year (Autumn,
+       Winter, Spring), the last ten academic years, and the last ten summers. Summer is never part of a year; it has its own
+       view. Past quarters show the numbers the Time Schedule archive keeps for them.
+       Each quarter is counted with the Quarter view's filters, generalized: Gen Ed, the level picked under "Count only",
+       the instructors unchecked, and the courses excluded everywhere (excludedCourses). Unchecking single sections changes
+       only the Quarter view's own quarter, since section codes change every quarter. */
+    const tsQuizCache = {};
+    let viewMode = "quarter", pvYear = null, pvFocus = null, pvSummer = null, pvToken = 0;
+    const QN3 = { WIN: 0, SPR: 1, SUM: 2, AUT: 3 }, YEAR_QTRS = ["AUT", "WIN", "SPR"];
+    function qIndex(id){ return +id.slice(3) * 4 + QN3[id.slice(0, 3)]; }
+    function qOfYear(q, ay){ return q + (q === "AUT" ? ay : ay + 1); }
+    function ayLabel(ay){ return ay + "–" + String(ay + 1).slice(2); }
+    /* The newest academic year and summer to show: the page's own, and from Summer on, the coming Autumn's year. */
+    const NEWEST_AY = (function(){ const q = currQuarterId.slice(0, 3), y = +currQuarterId.slice(3); return q === "AUT" || q === "SUM" ? y : y - 1; })();
+    const NEWEST_SUMMER = (function(){ const q = currQuarterId.slice(0, 3), y = +currQuarterId.slice(3); return q === "WIN" ? y - 1 : y; })();
+    pvYear = NEWEST_AY;
+    function fmtN(n){ return Number(n).toLocaleString("en-US"); }
+    /* A history page: its lecture rows (for Time Series and these views) and its quiz rows, with TA names replaced. */
+    function storeHistoryPage(key, html){
+        const rows = parseUWTimeSchedule(html, true);
+        labelQuizLeaders(rows, rows.quiz);
+        tsQuizCache[key] = rows.quiz;
+        tsDataCache[key] = rows;
+        return rows;
+    }
+
+    /* Courses excluded everywhere, by prefix and number (e.g. "PHIL 484"): unchecking every section of a course in the
+       Quarter view adds it; × in the Excluded bar, or checking one of its sections again, removes it. Kept in this browser
+       (and in snapshots), so independent-study courses stay out of every quarter's numbers. Suggested: courses whose
+       sections all meet "to be arranged" with variable credits, the Time Schedule's signs of independent study. */
+    function courseKey(d){ return d.prefix + " " + d.number; }
+    function loadList(k){ if(SNAPSHOT) return []; try { return JSON.parse(localStorage.getItem(k) || "[]") || []; } catch(e){ return []; } }
+    function saveList(k, v){ if(SNAPSHOT) return; try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+    let excludedCourses = loadList("tsmod-excluded-courses"), dismissedSuggestions = loadList("tsmod-excl-dismissed");
+    function saveExcludedCourses(){ saveList("tsmod-excluded-courses", excludedCourses); }
+    function applyCourseExclusions(){
+        rawData.forEach(function(d){ const k = sectionKey(d); if(excludedCourses.indexOf(courseKey(d)) !== -1 && excludedSections.indexOf(k) === -1) excludedSections.push(k); });
+    }
+    function exclusionSuggestions(){
+        const by = {};
+        rawData.filter(function(d){ return activePrefixes.indexOf(d.prefix) !== -1; }).forEach(function(d){ (by[courseKey(d)] = by[courseKey(d)] || []).push(d); });
+        return Object.keys(by).filter(function(k){
+            return excludedCourses.indexOf(k) === -1 && dismissedSuggestions.indexOf(k) === -1
+                && by[k].every(function(d){ return d.tba; }) && by[k].some(function(d){ return d.varCredits; });
+        }).sort();
+    }
+    function renderExclBar(){
+        const shown = excludedCourses.filter(function(k){ return activePrefixes.some(function(p){ return k.indexOf(p + " ") === 0; }); }).sort();
+        const sugg = SNAPSHOT ? [] : exclusionSuggestions();
+        const bar = $("#excl-bar");
+        if(!shown.length && !sugg.length){ bar.hide().empty(); return; }
+        bar.html((shown.length ? "<strong title='Left out of every quarter and every view, and remembered in this browser. To add a course, uncheck all of its sections in the table; × brings it back.'>Excluded everywhere:</strong>"
+                + shown.map(function(k){ return "<span class='excl-chip'>" + snapEsc(k) + (SNAPSHOT ? "" : "<button type='button' data-course='" + snapEsc(k) + "' aria-label='Include " + snapEsc(k) + " again'>×</button>") + "</span>"; }).join("") : "")
+            + (sugg.length ? "<span class='excl-sugg' title='Every section meets “to be arranged”, with variable credits: the usual signs of independent study'>Look like independent study: <b>" + snapEsc(sugg.join(", ")) + "</b>"
+                + "<button type='button' class='excl-yes'>Exclude " + (sugg.length === 1 ? "it" : "them") + "</button><button type='button' class='excl-no'>Not now</button></span>" : "")).show();
+    }
+    $(document).on("click", "#excl-bar [data-course]", function(){
+        const k = $(this).attr("data-course"), keys = rawData.filter(function(d){ return courseKey(d) === k; }).map(sectionKey);
+        excludedCourses = excludedCourses.filter(function(x){ return x !== k; });
+        excludedSections = excludedSections.filter(function(x){ return keys.indexOf(x) === -1; });
+        saveExcludedCourses();
+        renderDashboard();
+    });
+    $(document).on("click", "#excl-bar .excl-yes", function(){
+        exclusionSuggestions().forEach(function(k){ if(excludedCourses.indexOf(k) === -1) excludedCourses.push(k); });
+        saveExcludedCourses();
+        renderDashboard();
+    });
+    $(document).on("click", "#excl-bar .excl-no", function(){
+        dismissedSuggestions = dismissedSuggestions.concat(exclusionSuggestions());
+        saveList("tsmod-excl-dismissed", dismissedSuggestions);
+        renderExclBar();
+    });
+
+    /* The Quarter view's level under "Count only", when one level is picked. */
+    function chosenLevel(){ const b = $(".level-btn.active"); return b.length && b.attr("data-level") !== "all" ? b.attr("data-level") : null; }
+    function genEdOk(d, genEds){ return (d.genEd.length === 0 && genEds.indexOf("None") !== -1) || d.genEd.some(function(g){ return genEds.indexOf(g) !== -1; }); }
+    /* One quarter's numbers, with the generalized filters. The page's own quarter uses the Quarter view's exact choices. */
+    function quarterStats(id){
+        const genEds = $(".gened-filter:checked").map(function(){ return this.value; }).get(), level = chosenLevel(), own = id === currQuarterId;
+        let all = [], quiz = [], loaded = true, any = false;
+        activePrefixes.forEach(function(p){
+            const key = id + "_" + p;
+            if(own){ all = all.concat(rawData.filter(function(d){ return d.prefix === p; })); quiz = quiz.concat(quizData.filter(function(q){ return q.prefix === p; })); any = true; return; }
+            if(!(key in tsDataCache)){ loaded = false; return; }
+            const rows = tsDataCache[key].filter(function(d){ return d.prefix === p; });
+            if(rows.length) any = true;
+            all = all.concat(rows);
+            quiz = quiz.concat((tsQuizCache[key] || []).filter(function(q){ return q.prefix === p; }));
+        });
+        const rows = all.filter(function(d){
+            if(!genEdOk(d, genEds) || excludedInstructors.indexOf(d.instructor) !== -1 || excludedCourses.indexOf(courseKey(d)) !== -1) return false;
+            return own ? excludedSections.indexOf(sectionKey(d)) === -1 : !level || d.level === level;
+        });
+        const enrl = rows.reduce(function(n, d){ return n + d.enrl; }, 0), lim = rows.reduce(function(n, d){ return n + d.lim; }, 0), t = taEstimate(rows, all, quiz);
+        return { id: id, rows: rows, sections: rows.length, enrl: enrl, lim: lim, pct: lim ? enrl / lim * 100 : null, tas: t.named + t.more, approx: t.more > 0, quiz: t.sections,
+            state: !loaded ? "loading" : any ? "ok" : qIndex(id) > qIndex(currQuarterId) ? "future" : "none" };
+    }
+    function sumStats(list){
+        const ok = list.filter(function(st){ return st.state === "ok"; }), enrl = ok.reduce(function(n, st){ return n + st.enrl; }, 0), lim = ok.reduce(function(n, st){ return n + st.lim; }, 0);
+        return { sections: ok.reduce(function(n, st){ return n + st.sections; }, 0), enrl: enrl, lim: lim, pct: lim ? enrl / lim * 100 : null, tas: ok.reduce(function(n, st){ return n + st.tas; }, 0),
+            approx: ok.some(function(st){ return st.approx; }), parts: ok.length, state: ok.length ? "ok" : list.some(function(st){ return st.state === "loading"; }) ? "loading" : "none" };
+    }
+    function stateText(st){
+        if(st.state === "loading") return "Loading…";
+        if(st.state === "future") return "Not published yet";
+        if(SNAPSHOT && st.id && st.id !== currQuarterId && !Object.keys(SNAPSHOT.history || {}).some(function(k){ return k.indexOf(st.id + "_") === 0; })) return "Not in this snapshot";
+        return "No sections";
+    }
+    function cardsHtml(st, taTitle){
+        const card = function(h, v, extra){ return "<div class='pv-card'" + (extra || "") + "><h3>" + h + "</h3><div class='pv-v'>" + v + "</div></div>"; };
+        return "<div class='pv-cards'>" + card("Sections", fmtN(st.sections)) + card("Enrolled", fmtN(st.enrl)) + card("Capacity", fmtN(st.lim))
+            + card("Fullness", st.pct === null ? "–" : st.pct.toFixed(1) + "%")
+            + card("<span class='nc'>TAs</span> <span class='est'>(est.)</span>", (st.approx ? "≈" : "") + st.tas, taTitle ? " title='" + snapEsc(taTitle) + "'" : "") + "</div>";
+    }
+    /* Shading by fullness: lavender to deeper purple, and dark green when over capacity, as in the % Full dots. */
+    function shade(pct){ return pct === null ? "" : pct > 100 ? "background:rgba(45,106,46,.16)" : "background:rgba(75,46,131," + (0.03 + 0.2 * Math.min(pct, 100) / 100).toFixed(3) + ")"; }
+    function cellHtml(st, attrs, ta){
+        if(st.state !== "ok") return "<td class='pv-cell pv-na'" + attrs + ">" + snapEsc(stateText(st)) + "</td>";
+        return "<td class='pv-cell'" + attrs + " style='" + shade(st.pct) + "'><div class='pc-big'><b>" + fmtN(st.enrl) + "</b> enrolled</div>"
+            + "<div>of " + fmtN(st.lim) + " seats · <b>" + (st.pct === null ? "–" : st.pct.toFixed(1) + "%") + "</b> full</div>"
+            + "<div>" + plural(st.sections, "section") + " · " + (st.approx ? "≈" : "") + st.tas + " " + (ta || (st.tas === 1 ? "TA" : "TAs")) + "</div></td>";
+    }
+    function scatterTraces(rows){
+        const traces = [];
+        activePrefixes.forEach(function(prefix){
+            const pr = rows.filter(function(d){ return d.prefix === prefix && d.lim > 0; });
+            if(!pr.length) return;
+            traces.push({ x: pr.map(function(d){ return d.lim; }), y: pr.map(function(d){ return d.enrl; }), mode: "markers", type: "scatter", name: prefix,
+                marker: { size: 11, color: colorFor(prefix), opacity: 0.85, line: { color: "#ffffff", width: 1 } },
+                text: pr.map(function(d){ return d.prefix + " " + d.number + " " + d.section + "<br>" + d.name + "<br>" + d.instructor + "<br>Enrl: " + d.enrl + "/" + d.lim; }), hoverinfo: "text" });
+        });
+        const max = Math.max.apply(null, rows.map(function(d){ return d.lim; }).concat([10]));
+        traces.push({ x: [0, max], y: [0, max], mode: "lines", type: "scatter", name: "100% Full", line: { dash: "dash", color: "#e41a1c", width: 1.5 }, hoverinfo: "none" });
+        return traces;
+    }
+    function drawScatter(id, rows){
+        Plotly.react(id, scatterTraces(rows), { xaxis: { title: "Capacity" }, yaxis: { title: "Enrolled" }, showlegend: activePrefixes.length > 1, legend: { orientation: "h", y: -0.28 },
+            autosize: true, height: 300, margin: { t: 12, l: 48, r: 10, b: 44 } }, { responsive: true, displayModeBar: false });
+    }
+    function quarterBlock(st, chartId){
+        return "<h2>" + snapEsc(quarterName(st.id)) + (st.id === currQuarterId ? " <span class='pv-this' title='The Quarter view’s quarter: its own section choices apply'>this quarter</span>" : "") + "</h2>"
+            + (st.state === "ok" ? cardsHtml(st) + "<div class='pv-chart' id='" + chartId + "'></div>" : "<div class='pv-na pv-big-na'>" + snapEsc(stateText(st)) + "</div>");
+    }
+    function drawYear(){
+        const stats = YEAR_QTRS.map(function(q){ return quarterStats(qOfYear(q, pvYear)); }), year = sumStats(stats);
+        let years = "";
+        for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) years += "<option value='" + ay + "'" + (ay === pvYear ? " selected" : "") + ">" + ayLabel(ay) + "</option>";
+        $("#period-view").html("<div class='pv-head'><label>Academic year <select id='pv-year'>" + years + "</select></label><span class='pv-hint'>Autumn, Winter and Spring. Summer has its own view.</span></div>"
+            + "<div class='pv-year'><h2>" + ayLabel(pvYear) + (year.parts && year.parts < 3 ? " <span class='pv-this'>" + year.parts + " of 3 quarters</span>" : "") + "</h2>"
+            + (year.state === "ok" ? cardsHtml(year, "TA-quarters: each quarter’s estimate, added up (a TA in all three quarters counts 3)") : "<div class='pv-na pv-big-na'>" + (year.state === "loading" ? "Loading…" : "No sections") + "</div>") + "</div>"
+            + "<div class='pv-cols'>" + stats.map(function(st, i){ return "<div class='pv-col" + (pvFocus === st.id ? " pv-focus" : "") + "' data-q='" + st.id + "'>" + quarterBlock(st, "pv-chart-" + i) + "</div>"; }).join("") + "</div>");
+        stats.forEach(function(st, i){ if(st.state === "ok") drawScatter("pv-chart-" + i, st.rows); });
+        if(pvFocus){ const el = document.querySelector(".pv-col.pv-focus"); if(el) el.scrollIntoView({ block: "nearest" }); }
+    }
+    function drawDecade(){
+        let body = "";
+        for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--){
+            const stats = YEAR_QTRS.map(function(q){ return quarterStats(qOfYear(q, ay)); }), year = sumStats(stats);
+            body += "<tr><th class='pv-yr' data-year='" + ay + "' title='Open " + ayLabel(ay) + " in Year'>" + ayLabel(ay) + (year.parts && year.parts < 3 ? "<span>" + year.parts + " of 3 quarters</span>" : "") + "</th>"
+                + stats.map(function(st){ return cellHtml(st, " data-year='" + ay + "' data-q='" + st.id + "' title='Open " + quarterName(st.id) + " in Year'"); }).join("")
+                + cellHtml(Object.assign({ id: "" }, year), " data-year='" + ay + "' title='Open " + ayLabel(ay) + " in Year. TAs are TA-quarters: each quarter’s estimate, added up.'", year.tas === 1 ? "TA-quarter" : "TA-quarters") + "</tr>";
+        }
+        $("#period-view").html("<div class='pv-head'><span class='pv-hint'>The last ten academic years. Click a year or quarter to open it in Year.</span></div>"
+            + "<table class='pv-table'><thead><tr><th>Academic year</th><th>Autumn</th><th>Winter</th><th>Spring</th><th class='pv-tot'>Year</th></tr></thead><tbody>" + body + "</tbody></table>");
+    }
+    function drawSummers(){
+        const list = [];
+        for(let y = NEWEST_SUMMER; y > NEWEST_SUMMER - 10; y--) list.push(quarterStats("SUM" + y));
+        if(pvSummer === null || !list.some(function(st){ return st.id === "SUM" + pvSummer && st.state === "ok"; })){ const first = list.filter(function(st){ return st.state === "ok"; })[0]; if(first) pvSummer = +first.id.slice(3); }
+        const sel = list.filter(function(st){ return st.id === "SUM" + pvSummer; })[0];
+        $("#period-view").html("<div class='pv-head'><span class='pv-hint'>The last ten summers. Click one to see it beside the list.</span></div><div class='pv-summers'><table class='pv-table pv-stable'><thead><tr><th>Summer</th><th>All terms</th></tr></thead><tbody>"
+            + list.map(function(st){ return "<tr class='" + (sel && st.id === sel.id ? "pv-sel" : "") + "'><th class='pv-yr' data-summer='" + st.id.slice(3) + "'>" + st.id.slice(3) + "</th>" + cellHtml(st, " data-summer='" + st.id.slice(3) + "'") + "</tr>"; }).join("")
+            + "</tbody></table><div class='pv-col pv-sdetail'>" + (sel && sel.state === "ok" ? quarterBlock(sel, "pv-chart-sum") : "<div class='pv-na pv-big-na'>" + (list.some(function(st){ return st.state === "loading"; }) ? "Loading…" : "No summer sections") + "</div>") + "</div></div>");
+        if(sel && sel.state === "ok") drawScatter("pv-chart-sum", sel.rows);
+    }
+    function neededQuarters(){
+        const ids = [];
+        if(viewMode === "year") YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, pvYear)); });
+        if(viewMode === "decade") for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, ay)); });
+        if(viewMode === "summers") for(let y = NEWEST_SUMMER; y > NEWEST_SUMMER - 10; y--) ids.push("SUM" + y);
+        return ids;
+    }
+    function isPeriodView(){ return viewMode === "year" || viewMode === "decade" || viewMode === "summers"; }
+    function drawPeriod(){
+        if(!activePrefixes.length){ $("#period-view").html("<div class='pv-na pv-big-na'>Add a prefix above to see " + (viewMode === "summers" ? "its summers" : viewMode === "year" ? "a year" : "a decade") + ".</div>"); return; }
+        if(viewMode === "year") drawYear(); else if(viewMode === "decade") drawDecade(); else if(viewMode === "summers") drawSummers();
+    }
+    /* Pages not read yet are fetched three at a time (shared with Time Series), with a progress bar; a saved snapshot never fetches. */
+    async function renderPeriod(){
+        if(!isPeriodView()) return;
+        const token = ++pvToken;
+        drawPeriod();
+        if(SNAPSHOT || !activePrefixes.length) return;
+        const tasks = [];
+        neededQuarters().forEach(function(id){ if(id === currQuarterId) return; activePrefixes.forEach(function(p){ const key = id + "_" + p; if(!(key in tsDataCache)) tasks.push({ id: id, p: p, key: key }); }); });
+        if(!tasks.length) return;
+        const total = tasks.length;
+        let done = 0;
+        $("#pv-progress").css("display", "flex").find(".pv-fill").css("width", "0%");
+        const worker = async function(){
+            while(tasks.length){
+                const t = tasks.shift();
+                if(!(t.key in tsDataCache)){
+                    $("#pv-status").text("Reading " + quarterName(t.id) + " " + t.p + " (" + (done + 1) + " of " + total + ")");
+                    try {
+                        const res = await fetch("https://www.washington.edu/students/timeschd/" + t.id + "/" + prefixLookup[t.p]);
+                        if(res.ok) storeHistoryPage(t.key, await res.text()); else { tsDataCache[t.key] = []; tsQuizCache[t.key] = []; }
+                    } catch(e){ tsDataCache[t.key] = []; tsQuizCache[t.key] = []; }
+                }
+                done++;
+                $("#pv-progress .pv-fill").css("width", (done / total * 100) + "%");
+                if(done % 6 === 0 && token === pvToken) drawPeriod();
+            }
+        };
+        await Promise.all([worker(), worker(), worker()]);
+        if(token === pvToken){ $("#pv-progress").hide(); drawPeriod(); }
+    }
+    function setView(v){
+        viewMode = v;
+        $(".view-seg button").each(function(){ const on = $(this).attr("data-view") === v; $(this).toggleClass("on", on).attr("aria-pressed", String(on)); });
+        const series = v === "series";
+        if($("#ts-toggle").is(":checked") !== series) $("#ts-toggle").prop("checked", series).trigger("change");
+        document.body.classList.toggle("pv-on", isPeriodView());
+        if(!isPeriodView()) $("#pv-progress").hide();
+        renderPeriod();
+    }
+    $(document).on("click", ".view-seg button", function(){ setView($(this).attr("data-view")); });
+    $(document).on("change", "#pv-year", function(){ pvYear = +this.value; pvFocus = null; renderPeriod(); });
+    $(document).on("click", ".pv-table [data-year]", function(){ pvYear = +$(this).attr("data-year"); pvFocus = $(this).attr("data-q") || null; setView("year"); });
+    $(document).on("click", ".pv-stable [data-summer]", function(){ pvSummer = +$(this).attr("data-summer"); drawSummers(); });
+    /* Every redraw of the Quarter view also refreshes the Excluded bar and, when one is showing, the other views. */
+    const benRenderDashboard = renderDashboard;
+    renderDashboard = function(opts){ applyCourseExclusions(); benRenderDashboard(opts); renderExclBar(); if(isPeriodView()) drawPeriod(); };
 """
 
 insert('(async function(){\n', START, where='after')
@@ -417,18 +689,54 @@ insert('results.push({', 'if(isQuiz){ results.quiz.push({ sln: sln, prefix: curr
 insert('let rawData = [];', '\n    let quizData = [];\n    const fetchedAt = {};', where='after')
 insert('rawData = rawData.concat(added);', 'added.forEach(function(d){ d.src = p; });\n                added.quiz.forEach(function(d){ d.src = p; });\n                labelQuizLeaders(added, added.quiz);\n                quizData = quizData.concat(added.quiz);\n                fetchedAt[p] = new Date().toISOString();\n                ')
 # Header: data time and the Save snapshot button, left of the Current / Time Series switch.
-insert('<div class="ts-toggle-container">', '<div class="snap-tools"><span id="snap-asof" class="snap-asof"></span><button type="button" id="snap-save" class="snap-btn" disabled title="Load a prefix first">' + ICON + 'Save snapshot</button></div>')
+# Header: the All Departments and CAS Curriculum Policies links go; a row of view buttons replaces the Current / Time
+# Series switch (its checkbox stays, hidden, since Ben's code shows and hides Time Series by it); Save snapshot, with the
+# data's time inside it, gets a second row.
+insert('<div class="dashboard-links"><a href="${r}" target="_blank">All Departments ↗</a><a href="https://admin.artsci.washington.edu/curriculum/curriculum-planning-general-information" target="_blank">CAS Curriculum Policies ↗</a></div>', '', replace=True)
+insert('<div class="ts-toggle-container"><span>Current</span><label class="switch"><input type="checkbox" id="ts-toggle"><span class="slider"></span></label><span>Time Series</span></div>',
+    '<div class="view-seg" role="group" aria-label="View">'
+    + '<button type="button" data-view="quarter" class="on" aria-pressed="true" title="This quarter, section by section">Quarter</button>'
+    + '<button type="button" data-view="year" aria-pressed="false" title="Autumn, Winter and Spring of one academic year">Year</button>'
+    + '<button type="button" data-view="decade" aria-pressed="false" title="The last ten academic years, quarter by quarter">Decade</button>'
+    + '<button type="button" data-view="summers" aria-pressed="false" title="The last ten summers">Summers</button>'
+    + '<button type="button" data-view="series" aria-pressed="false" title="Chosen courses, quarter by quarter, over ten years">Time series</button>'
+    + '<input type="checkbox" id="ts-toggle" hidden></div>'
+    + '<div class="snap-tools"><button type="button" id="snap-save" class="snap-btn" disabled title="Load a prefix first">' + ICON + 'Save snapshot<span id="snap-asof" class="snap-asof"></span></button></div>', replace=True)
+insert('<div id="active-prefix-chips"></div>', '<div id="excl-bar" class="excl-bar" style="display:none"></div>', where='after')
+insert('<div class="stats-row">', '<div id="pv-progress"><div class="pv-bar"><div class="pv-fill"></div></div><span id="pv-status"></span></div><div id="period-view"></div>')
+# Parser: a section's "to be arranged" meeting and variable credits, the signs of independent study.
+insert('const section = slnMatch[2];', r'''
+                const credTok = (line.slice(line.indexOf(slnMatch[0]) + slnMatch[0].length).trim().split(/\s+/)[0] || "");
+                const tba = /to be arranged/i.test(line), varCredits = /^(VAR|\d+-\d*)$/i.test(credTok);''', where='after')
+insert('pct: lim > 0 ? (enrl / lim) * 100 : 0', ', tba: tba, varCredits: varCredits', where='after')
+# A "to be arranged" meeting can run into the instructor's name ("to be arranged Smith,Ann"); keep just the name.
+insert(r'instructor = instructor.replace(/\\s+(Open|Closed|Restr|Full-term)$/ig, "").trim();', r'''
+                instructor = instructor.replace(/^to be arranged\s*/i, "") || "TBA";''', where='after')
+# Time Series keeps each page's quiz rows too, for the TA estimate in the other views.
+insert('tsDataCache[task.key] = parseUWTimeSchedule(await res.text());', 'storeHistoryPage(task.key, await res.text());', replace=True)
+# Before Ben's own handler: a section checkbox can exclude or bring back its whole course (see excludedCourses).
+insert('$("#course-table").on("change", ".sec-toggle"', r'''$("#course-table").on("change", ".sec-toggle", function(){
+        const key = $(this).attr("data-key"), d = rawData.filter(function(x){ return sectionKey(x) === key; })[0];
+        if(!d) return;
+        const ck = courseKey(d);
+        if(this.checked){ if(excludedCourses.indexOf(ck) !== -1){ excludedCourses = excludedCourses.filter(function(x){ return x !== ck; }); saveExcludedCourses(); } return; }
+        const others = rawData.filter(function(x){ return courseKey(x) === ck && sectionKey(x) !== key; });
+        if(excludedCourses.indexOf(ck) === -1 && others.every(function(x){ return excludedSections.indexOf(sectionKey(x)) !== -1; })){ excludedCourses.push(ck); saveExcludedCourses(); }
+    });
+    ''')
 # A fifth card: TAs, estimated.
 insert('<div class="stat-card"><h3>Fullness</h3><div class="value" id="stat-pct">0%</div></div>', '<div class="stat-card" id="ta-card"><h3><span class="nc">TAs</span> <span class="est">(est.)</span></h3><div class="value" id="stat-ta">0</div><div class="stat-sub" id="stat-ta-sub"></div><button type="button" id="ta-open" class="ta-open" title="Every quiz section, and how the estimate adds up">By course</button></div>', where='after')
 insert('$("#stat-pct").text(totalLim > 0 ? ((totalEnrl / totalLim) * 100).toFixed(1) + "%" : "0%");', '\n        renderTaCard(filteredData);\n        updateAsOf();', where='after')
 insert('</style>', CSS.replace('\n', ''))
 insert('<h1>UW Time Schedule Analytics</h1>', '<h1>TimeScheduleMod</h1>', replace=True)
+# The first card counts the sections still checked after every filter; "Filtered Sections" read as the ones filtered out.
+insert('<h3>Filtered Sections</h3>', '<h3 title="Lecture sections counted: checked, and matching the Gen Ed, level and instructor filters">Sections counted</h3>', replace=True)
 insert('UW Time Schedule Dashboard</title>', 'TimeScheduleMod</title>', replace=True)
 # % Full: drawn dots instead of emoji, so over-capacity sections can be a darker green (there is no dark green circle emoji).
 insert('''let emoji = (data >= 75 && data <= 100) ? "🟢" : (data > 100 || (data >= 50 && data < 75)) ? "🟠" : "🔴";
                             return emoji + " " + data.toFixed(1) + "%";''', '''const band = data > 100 ? ["over", "Over capacity"] : data >= 75 ? ["full", "75–100% full"] : data >= 50 ? ["mid", "50–75% full"] : ["low", "Under 50% full"];
                             return (type === "display" ? "<span class='fill-dot " + band[0] + "' title='" + band[1] + "'></span>" : "") + data.toFixed(1) + "%";''', replace=True)
-insert('let isFetchingTS = false;', FUNCTIONS + '    ')
+insert('let isFetchingTS = false;', FUNCTIONS + PERIOD + '    ')
 insert('renderDashboard();\n    renderChips();\n', 'if(SNAPSHOT) applySnapshot();\n    ')
 insert('window.addEventListener("resize"', '$("#snap-save").on("click", openSaveDialog);\n    $("#ta-open").on("click", openTaBreakdown);\n    if(SNAPSHOT) applySnapshotAfter();\n    ')
 

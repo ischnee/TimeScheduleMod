@@ -4,6 +4,7 @@ module.exports = async (check, port) => {
   const d = await launch('details', port);
   try {
     await d.openWithPhil();
+    check('the first card says Sections counted', (await d.evaluate('$(".stats-row .stat-card h3").first().text()')) === 'Sections counted');
     check('header says TimeScheduleMod', (await d.evaluate('$(".dashboard-header h1").text() + " | " + document.title')) === 'TimeScheduleMod | AUT2026 TimeScheduleMod');
     await d.click('#snap-save');
     const state = () => d.evaluate('({ focus: document.activeElement.id, note: $("#snap-note").val(), pick: $(".snap-picks button.on").text() })');

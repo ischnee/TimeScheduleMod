@@ -1,6 +1,6 @@
 # TimeScheduleMod (TSMod)
 
-A version of Ben Marwick's **Time Schedule Viz** bookmarklet ([uw-anthro-web-helpers](https://github.com/benmarwick/uw-anthro-web-helpers)) for the UW Time Schedule. It adds registration snapshots and a TA estimate. Everything else works as in Ben's dashboard, and his README explains how to use it.
+A version of Ben Marwick's **Time Schedule Viz** bookmarklet ([uw-anthro-web-helpers](https://github.com/benmarwick/uw-anthro-web-helpers)) for the UW Time Schedule. It adds registration snapshots, a TA estimate, and views of a whole year, a decade and ten summers. Everything else works as in Ben's dashboard, and his README explains how to use it.
 
 **Status: in testing.**
 
@@ -22,6 +22,17 @@ A version of Ben Marwick's **Time Schedule Viz** bookmarklet ([uw-anthro-web-hel
   - **By course** opens every quiz section with the arithmetic course by course. Each section links to its Time Schedule page.
 - **TA names are never kept.** As each page loads, TA names become TA1, TA2, and so on. Only these labels are shown and saved.
 - **% Full dots** are drawn instead of emoji, so sections over capacity can be dark green.
+- **Views:** buttons in the header switch between **Quarter** (Ben's dashboard for the quarter you opened), **Year**, **Decade**, **Summers** and **Time series**.
+  - **Year:** one academic year (Autumn, Winter, Spring). It shows cards for the year, then a column per quarter with its own cards and Enrolled vs Capacity chart. A menu picks the year.
+  - **Decade:** the last ten academic years, one per row. Each quarter's cell shows enrolled, seats, % full, sections and TAs, shaded by fullness, with the year's totals in the last column. Click a cell or year to open it in Year.
+  - **Summers:** the last ten summers, which are never part of a year. Click one to see its cards and chart.
+  - **Where the numbers come from:** these views read the same Time Schedule pages as Time Series, about a minute for a decade, shown with a progress bar. Past quarters show the numbers UW's archive keeps, the quarter's final ones.
+  - **TAs for a year** are TA-quarters: each quarter's estimate added up, so a TA working all three quarters counts 3.
+- **Filters carry over:** Gen Ed, "Count only" a level, and the instructors unchecked apply in every view. Unchecking single sections changes only the quarter you opened, because sections differ every quarter.
+- **Courses excluded everywhere,** for independent study and the like:
+  - **Excluding:** uncheck every section of a course in the Quarter view, and that course number (e.g. PHIL 484) is left out of every quarter, view and total, including % full.
+  - **The Excluded bar** under the prefixes lists these courses; × brings one back. TSMod remembers them in your browser, and snapshots keep them.
+  - **Suggestions:** TSMod suggests courses whose sections all meet "to be arranged" with variable credits, the usual signs of independent study. One click excludes them.
 
 ## Install
 
@@ -80,7 +91,7 @@ This short script loads the latest TimeScheduleMod from this repository each tim
   python3 build.py && node make-import.js
   node --experimental-websocket test/run.js
   ```
-  The tests need Google Chrome and Node 20 or later. They run the dashboard in headless Chrome against a fake PHIL Time Schedule (`test/fake-time-schedule.js`), in which every name and number is invented.
+  The tests need Google Chrome and Node 20 or later. They run the dashboard in headless Chrome against a fake Time Schedule (`test/fake-time-schedule.js`), in which every name and number is invented: a PHIL department for one quarter's details, and a CLAS department with pages from 2016 to 2026 for Year, Decade and Summers.
 - **Every push reaches every user.** Everyone using the loader runs whatever is on `main` the next time they click. Keep write access to people who need it, and protect those GitHub accounts with two-factor authentication.
 - **Send updates out right away.** jsDelivr keeps a copy of the file on its servers for up to 12 hours. About a minute after pushing, open `https://purge.jsdelivr.net/gh/ischnee/TimeScheduleMod@main/bookmarklet-timeschedulemod.js` once, and everyone gets the new version on their next click.
   - Wait the minute: purging in the first seconds after a push can put the old version straight back, before GitHub reports the new one.
