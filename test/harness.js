@@ -21,6 +21,11 @@ function startServer() {
       const html = fs.readFileSync(path.join(TMP, req.url === '/dash' ? 'dashboard.html' : 'dashboard-phil.html'), 'utf8').split('https://www.washington.edu/students/timeschd/').join(BASE + '/students/timeschd/');
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(html);
     }
+    // Pages for the wrong-page notices and the loader: somewhere else, the Time Schedule's front page, a quarter page, a page
+    // that blocks scripts from other sites (as many sites do), and the built bookmarklet as jsDelivr would serve it.
+    if (req.url === '/elsewhere' || req.url === '/students/timeschd/' || req.url === '/students/timeschd/AUT2026/') { res.writeHead(200, { 'content-type': 'text/html' }); return res.end('<html><body><h1>' + req.url + '</h1></body></html>'); }
+    if (req.url === '/strict') { res.writeHead(200, { 'content-type': 'text/html', 'content-security-policy': "script-src 'self'" }); return res.end('<html><body><h1>Strict</h1></body></html>'); }
+    if (req.url.startsWith('/cdn/bookmarklet-timeschedulemod.js')) { res.writeHead(200, { 'content-type': 'application/javascript' }); return res.end(fs.readFileSync(path.join(DIR, '..', 'bookmarklet-timeschedulemod.js'))); }
     if (req.url === '/__fetches') { res.writeHead(200); return res.end(String(fetches)); }
     if (req.url === '/__signout') { signedOut = !signedOut; res.writeHead(200); return res.end(String(signedOut)); }
     if (req.url.startsWith('/__clasdelay')) { clasDelay = +(req.url.split('=')[1] || 0); res.writeHead(200); return res.end(String(clasDelay)); }
