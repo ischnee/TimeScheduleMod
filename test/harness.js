@@ -72,6 +72,7 @@ async function launch(name, port) {
   d.on(m => { if (m.method === 'Runtime.exceptionThrown') d.errors.push((m.params.exceptionDetails.exception || {}).description || m.params.exceptionDetails.text); });
   await d.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
   d.downloads = downloads;
+  d.port = port;
   d.kill = () => chrome.kill();
   /* A real mouse click in the middle of the element. */
   d.click = async sel => {
@@ -105,4 +106,4 @@ async function launch(name, port) {
 /* The snapshot data inside a saved file. */
 function snapshotIn(html) { return JSON.parse(html.match(/<script id="tsv-snapshot" type="application\/json">([\s\S]*?)<\/script>/)[1]); }
 
-module.exports = { DIR, TMP, BASE, sleep, startServer, fetchCount, toggleSignedOut, launch, snapshotIn };
+module.exports = { DIR, TMP, BASE, sleep, startServer, fetchCount, toggleSignedOut, launch, snapshotIn, connect };

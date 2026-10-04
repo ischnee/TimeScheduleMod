@@ -176,6 +176,23 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
         return t;
     }
     function plural(n, one, many){ return n + " " + (n === 1 ? one : (many || one + "s")); }
+    /* The page TSMod was opened on, for its own prefix (see startPrefix), if it loaded within 10 minutes. */
+    let openerPage = null;
+    try {
+        const o = window.opener, loadedAt = o && o.performance ? o.performance.timeOrigin : 0;
+        if(o && startPage && o.location.pathname.toLowerCase().endsWith("/" + startPage.toLowerCase()) && o.location.pathname.toUpperCase().indexOf("/" + currQuarterId + "/") !== -1
+            && Date.now() - loadedAt < 10 * 60 * 1000) openerPage = { file: startPage.toLowerCase(), html: "<!DOCTYPE html>\n" + o.document.documentElement.outerHTML, at: new Date(loadedAt).toISOString() };
+    } catch(e){ openerPage = null; }
+    const usedOpener = {};
+    function fetchFirstPage(p){
+        if(openerPage && prefixLookup[p].toLowerCase() === openerPage.file && !usedOpener[p]){
+            usedOpener[p] = openerPage.at;
+            const html = openerPage.html;
+            return Promise.resolve({ ok: true, status: 200, text: function(){ return Promise.resolve(html); } });
+        }
+        return fetch(baseUrl + prefixLookup[p]);
+    }
+    function pageTime(p){ return usedOpener[p] || new Date().toISOString(); }
     function renderTaCard(filtered){
         taFiltered = filtered;
         const t = taEstimate(filtered);
@@ -453,7 +470,7 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
        the instructors unchecked, and the courses excluded everywhere (excludedCourses). Unchecking single sections changes
        only the Quarter view's own quarter, since section codes change every quarter. */
     const tsQuizCache = {};
-    let viewMode = "quarter", pvYear = null, pvFocus = null, pvSummer = null, tsMode = "ay";
+    let viewMode = "quarter", pvYear = null, pvFocus = null, pvScrollOnce = false, pvSummer = null, tsMode = "ay";
     const QN3 = { WIN: 0, SPR: 1, SUM: 2, AUT: 3 }, YEAR_QTRS = ["AUT", "WIN", "SPR"];
     function qIndex(id){ return +id.slice(3) * 4 + QN3[id.slice(0, 3)]; }
     function qOfYear(q, ay){ return q + (q === "AUT" ? ay : ay + 1); }
@@ -599,7 +616,7 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
             + (year.state === "ok" ? cardsHtml(year, "TA-quarters: each quarter’s estimate, added up (a TA in all three quarters counts 3)") : "<div class='pv-na pv-big-na'>" + (year.state === "loading" ? "Loading…" : "No sections") + "</div>") + "</div>"
             + "<div class='pv-cols'>" + stats.map(function(st, i){ return "<div class='pv-col" + (pvFocus === st.id ? " pv-focus" : "") + "' data-q='" + st.id + "'>" + quarterBlock(st, "pv-chart-" + i) + "</div>"; }).join("") + "</div>");
         stats.forEach(function(st, i){ if(st.state === "ok") drawScatter("pv-chart-" + i, st.rows); });
-        if(pvFocus){ const el = document.querySelector(".pv-col.pv-focus"); if(el) el.scrollIntoView({ block: "nearest" }); }
+        if(pvFocus && pvScrollOnce){ const el = document.querySelector(".pv-col.pv-focus"); if(el){ el.scrollIntoView({ block: "nearest" }); pvScrollOnce = false; } }
     }
     function drawDecade(){
         let body = "";
@@ -638,7 +655,10 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
        Once a prefix is loaded, every page these views and the time series use is read in the background, three at a time,
        newest academic years first: the last ten academic years, the last ten summers, and Time Series' 40 quarters (one
        shared cache). The progress bar shows only when the view on screen needs pages not read yet. A saved snapshot never
-       fetches. */
+       fetches.
+       So that it never makes the page lag (Oct 2026: the user saw jerky scrolling): it starts a couple of seconds after the
+       dashboard last redrew, reads two pages at a time, reads each page only when the browser is idle and nobody has
+       scrolled or typed for 400 ms, and a view redraws once, when all its pages are in. */
     const bgQueued = {};
     const bg = { queue: [], total: 0, done: 0, running: 0 };
     function wantedQuarters(){
@@ -674,7 +694,19 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
                 bg.total++;
             });
         });
-        while(bg.running < 3 && bg.queue.length) runBackground();
+        while(bg.running < 2 && bg.queue.length) runBackground();
+    }
+    let bgTimer = null, lastActivity = 0;
+    ["scroll", "wheel", "touchmove", "keydown", "mousedown"].forEach(function(ev){ window.addEventListener(ev, function(){ lastActivity = Date.now(); }, { passive: true, capture: true }); });
+    function scheduleBackground(){ if(SNAPSHOT) return; clearTimeout(bgTimer); bgTimer = setTimeout(startBackground, 2000); }
+    function whenCalm(){
+        return new Promise(function(done){
+            (function wait(){
+                const quiet = Date.now() - lastActivity;
+                if(quiet < 400) return setTimeout(wait, 410 - quiet);
+                if(window.requestIdleCallback) requestIdleCallback(function(){ done(); }, { timeout: 1500 }); else setTimeout(done, 0);
+            })();
+        });
     }
     async function runBackground(){
         bg.running++;
@@ -683,7 +715,9 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
             if(!(t.key in tsDataCache)){
                 try {
                     const res = await fetch("https://www.washington.edu/students/timeschd/" + t.id + "/" + prefixLookup[t.p]);
-                    if(res.ok) storeHistoryPage(t.key, await res.text()); else { tsDataCache[t.key] = []; tsQuizCache[t.key] = []; }
+                    const html = res.ok ? await res.text() : null;
+                    await whenCalm();
+                    if(html !== null && !(t.key in tsDataCache)) storeHistoryPage(t.key, html); else if(!(t.key in tsDataCache)){ tsDataCache[t.key] = []; tsQuizCache[t.key] = []; }
                 } catch(e){ tsDataCache[t.key] = []; tsQuizCache[t.key] = []; }
             }
             bg.done++;
@@ -696,8 +730,7 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
     function afterBackgroundPage(){
         const waiting = missingFor(neededQuarters()).length;
         if(waiting) showProgress(); else $("#bg-progress").hide();
-        if(isPeriodView() && (!waiting || bg.done % 6 === 0)) drawPeriod();
-        if(isSeriesView() && !waiting && !needsWereMet) seriesReady();
+        if(!waiting && !needsWereMet){ if(isPeriodView()) drawPeriod(); if(isSeriesView()) seriesReady(); }
         needsWereMet = !waiting;
     }
     function showProgress(){
@@ -767,11 +800,11 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
     }
     $(document).on("click", ".view-seg button", function(){ setView($(this).attr("data-view")); });
     $(document).on("change", "#pv-year", function(){ pvYear = +this.value; pvFocus = null; renderPeriod(); });
-    $(document).on("click", ".pv-table [data-year]", function(){ pvYear = +$(this).attr("data-year"); pvFocus = $(this).attr("data-q") || null; setView("year"); });
+    $(document).on("click", ".pv-table [data-year]", function(){ pvYear = +$(this).attr("data-year"); pvFocus = $(this).attr("data-q") || null; pvScrollOnce = true; setView("year"); });
     $(document).on("click", ".pv-stable [data-summer]", function(){ pvSummer = +$(this).attr("data-summer"); drawSummers(); });
     /* Every redraw of the Quarter view also refreshes the Excluded bar and, when one is showing, the other views. */
     const benRenderDashboard = renderDashboard;
-    renderDashboard = function(opts){ applyCourseExclusions(); benRenderDashboard(opts); renderExclBar(); startBackground(); if(isPeriodView() || isSeriesView()) renderPeriod(); };
+    renderDashboard = function(opts){ applyCourseExclusions(); benRenderDashboard(opts); renderExclBar(); scheduleBackground(); if(isPeriodView() || isSeriesView()) renderPeriod(); };
 """
 
 insert('(async function(){\n', START, where='after')
@@ -782,7 +815,7 @@ insert('if(line.includes("QZ")) continue;', 'const isQuiz = line.includes("QZ");
 insert('const added = parseUWTimeSchedule(await res.text());', 'const added = parseUWTimeSchedule(await res.text(), true);', replace=True)
 insert('results.push({', 'if(isQuiz){ results.quiz.push({ sln: sln, prefix: currentCourse.prefix, number: currentCourse.number, section: section, instructor: instructor, enrl: enrl, lim: lim }); continue; }\n                ')
 insert('let rawData = [];', '\n    let quizData = [];\n    const fetchedAt = {};', where='after')
-insert('rawData = rawData.concat(added);', 'added.forEach(function(d){ d.src = p; });\n                added.quiz.forEach(function(d){ d.src = p; });\n                labelQuizLeaders(added, added.quiz);\n                quizData = quizData.concat(added.quiz);\n                fetchedAt[p] = new Date().toISOString();\n                ')
+insert('rawData = rawData.concat(added);', 'added.forEach(function(d){ d.src = p; });\n                added.quiz.forEach(function(d){ d.src = p; });\n                labelQuizLeaders(added, added.quiz);\n                quizData = quizData.concat(added.quiz);\n                fetchedAt[p] = pageTime(p);\n                ')
 # Header: data time and the Save snapshot button, left of the Current / Time Series switch.
 # TSMod's own message box instead of Ben's alerts, as in MyGradMod: shown inside the page, headed so a first-time user knows
 # the bookmarklet is installed and working, with the steps (and a button to the Time Schedule). A browser can silence alerts.
@@ -795,6 +828,9 @@ insert('if(!l)return void alert("Popup blocked! Please allow popups for washingt
 # bookmarklet passes the page's file name, and each file belongs to exactly one prefix in prefixLookup.
 insert('r="https://www.washington.edu/students/timeschd/"+t+"/"', ',o=(window.location.pathname.match(/\\/([^\\/]+\\.html?)$/i)||[])[1]||""', where='after', raw=True)
 insert('const currQuarterId = "${t}";', '\\n    const startPage = "${o}";', where='after', raw=True)
+# The preset prefix's page is the one TSMod was opened on: if that page loaded in the last 10 minutes, its HTML is used
+# instead of fetching it again, and the data's time is when it loaded.
+insert('loadedPrefixes.push(p);\n        try {\n            const res = await fetch(baseUrl + prefixLookup[p]);', 'loadedPrefixes.push(p);\n        try {\n            const res = await fetchFirstPage(p);', replace=True)
 # Header: the All Departments and CAS Curriculum Policies links go; a row of view buttons replaces the Current / Time
 # Series switch (its checkbox stays, hidden, since Ben's code shows and hides Time Series by it); Save snapshot, with the
 # data's time inside it, gets a second row.

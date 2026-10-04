@@ -2,7 +2,7 @@
 // Captures the dashboard page the bookmarklet would open, serves it with made-up PHIL pages, and drives headless Chrome.
 const fs = require('fs'), path = require('path');
 const { TMP, startServer } = require('./harness.js');
-const TESTS = ['ta', 'snapshot', 'save-problems', 'save-as', 'details', 'views', 'preload', 'series', 'notice'];
+const TESTS = ['ta', 'snapshot', 'save-problems', 'save-as', 'details', 'views', 'preload', 'series', 'notice', 'opener'];
 
 (async () => {
   fs.mkdirSync(TMP, { recursive: true });
