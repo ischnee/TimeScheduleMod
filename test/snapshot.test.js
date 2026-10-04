@@ -38,7 +38,7 @@ module.exports = async (check, port) => {
     check('snapshot banner with the note', /^SNAPSHOTFirst day of classesAutumn 2026 · data as of /.test(view.banner), view.banner);
     check('prefixes locked, no Save, no chip ×', view.locked && !view.save && view.x === 0, view);
     check('tab title names the snapshot', view.title === 'Snapshot AUT2026 PHIL · First day of classes', view.title);
-    await d.click('.view-seg [data-view=series]');
+    await d.click('.view-seg [data-view=ayseries]');
     await d.evaluate('$("#ts-course-select").val(["PHIL|100"]).trigger("change")');
     await d.waitFor('(document.getElementById("chart-timeseries").data || []).length > 0', 40);
     const quarters = await d.evaluate('(document.getElementById("chart-timeseries").data || [])[0].y.filter(v => v !== null).length');

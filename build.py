@@ -88,7 +88,7 @@ CSS += """
 .excl-sugg button{margin-left:8px;border:1px solid #85754d;background:#fff;color:#3d2f0e;border-radius:12px;padding:1px 9px;font:600 12px 'Open Sans',Arial,sans-serif;cursor:pointer}.excl-sugg .excl-no{border-color:transparent;background:none;color:#85754d;margin-left:2px}
 #period-view{display:none;margin:15px 25px 25px}.pv-on #period-view{display:block}.pv-on #current-quarter-view .stats-row,.pv-on #current-quarter-view .charts-column,.pv-on #current-quarter-view .table-container{display:none}
 .pv-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px}.pv-head label{font-weight:600;color:#4b2e83;display:flex;align-items:center;gap:8px}.pv-head select{font:inherit;padding:4px 8px;border:1px solid #ccc;border-radius:5px}
-.pv-hint{font-size:13px;color:#777}#pv-progress{display:none;align-items:center;gap:12px;margin:12px 25px 0;font-size:12px;color:#4b2e83}
+.pv-hint{font-size:13px;color:#777}#bg-progress{display:none;align-items:center;gap:12px;margin:12px 25px 0;font-size:12px;color:#4b2e83}
 .pv-bar{width:240px;height:8px;background:#e8e3f3;border-radius:4px;overflow:hidden}.pv-fill{height:100%;width:0;background:#4b2e83;transition:width .2s}
 .pv-year,.pv-col{background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.05);padding:12px 16px}.pv-year{margin-bottom:15px}
 .pv-year h2,.pv-col h2{margin:0 0 10px;font-size:16px;color:#4b2e83;display:flex;align-items:center;gap:10px}.pv-this{font-size:11px;font-weight:600;color:#85754d;background:#fbf6e6;border-radius:10px;padding:2px 8px;cursor:help}
@@ -310,7 +310,7 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
             ui: { genEds: $(".gened-filter:checked").map(function(){ return this.value; }).get(), excludedSections: excludedSections.slice(), excludedInstructors: excludedInstructors.slice(),
                 table: dataTable ? { order: dataTable.order(), search: dataTable.search(), length: dataTable.page.len() } : null,
                 timeSeries: $("#ts-toggle").is(":checked"), tsSelected: $("#ts-course-select").val() || [], tsExcludedInstructors: tsExcludedInstructors.slice(),
-                excludedCourses: excludedCourses.slice(), view: viewMode, year: pvYear, summer: pvSummer } };
+                excludedCourses: excludedCourses.slice(), view: viewMode, year: pvYear, summer: pvSummer, tsMode: tsMode } };
     }
     /* The snapshot file: this page's own source with the data in #tsv-snapshot, and its suggested file name. */
     function snapshotFile(note, withHistory){
@@ -439,7 +439,7 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
         const ui = SNAPSHOT.ui || {};
         if(dataTable && ui.table) dataTable.order(ui.table.order || []).search(ui.table.search || "").page.len(ui.table.length || 25).draw();
         if(ui.timeSeries){
-            setView("series");
+            setView(ui.tsMode === "summer" ? "sumseries" : "ayseries");
             if(ui.tsSelected && ui.tsSelected.length) $("#ts-course-select").val(ui.tsSelected).trigger("change");
         } else if(ui.view && ui.view !== "quarter") setView(ui.view);
     }
@@ -453,7 +453,7 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
        the instructors unchecked, and the courses excluded everywhere (excludedCourses). Unchecking single sections changes
        only the Quarter view's own quarter, since section codes change every quarter. */
     const tsQuizCache = {};
-    let viewMode = "quarter", pvYear = null, pvFocus = null, pvSummer = null, pvToken = 0;
+    let viewMode = "quarter", pvYear = null, pvFocus = null, pvSummer = null, tsMode = "ay";
     const QN3 = { WIN: 0, SPR: 1, SUM: 2, AUT: 3 }, YEAR_QTRS = ["AUT", "WIN", "SPR"];
     function qIndex(id){ return +id.slice(3) * 4 + QN3[id.slice(0, 3)]; }
     function qOfYear(q, ay){ return q + (q === "AUT" ? ay : ay + 1); }
@@ -530,7 +530,7 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
         activePrefixes.forEach(function(p){
             const key = id + "_" + p;
             if(own){ all = all.concat(rawData.filter(function(d){ return d.prefix === p; })); quiz = quiz.concat(quizData.filter(function(q){ return q.prefix === p; })); any = true; return; }
-            if(!(key in tsDataCache)){ loaded = false; return; }
+            if(!(key in tsDataCache)){ if(!SNAPSHOT) loaded = false; return; }
             const rows = tsDataCache[key].filter(function(d){ return d.prefix === p; });
             if(rows.length) any = true;
             all = all.concat(rows);
@@ -634,43 +634,135 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
         if(!activePrefixes.length){ $("#period-view").html("<div class='pv-na pv-big-na'>Add a prefix above to see " + (viewMode === "summers" ? "its summers" : viewMode === "year" ? "a year" : "a decade") + ".</div>"); return; }
         if(viewMode === "year") drawYear(); else if(viewMode === "decade") drawDecade(); else if(viewMode === "summers") drawSummers();
     }
-    /* Pages not read yet are fetched three at a time (shared with Time Series), with a progress bar; a saved snapshot never fetches. */
-    async function renderPeriod(){
-        if(!isPeriodView()) return;
-        const token = ++pvToken;
-        drawPeriod();
-        if(SNAPSHOT || !activePrefixes.length) return;
-        const tasks = [];
-        neededQuarters().forEach(function(id){ if(id === currQuarterId) return; activePrefixes.forEach(function(p){ const key = id + "_" + p; if(!(key in tsDataCache)) tasks.push({ id: id, p: p, key: key }); }); });
-        if(!tasks.length) return;
-        const total = tasks.length;
-        let done = 0;
-        $("#pv-progress").css("display", "flex").find(".pv-fill").css("width", "0%");
-        const worker = async function(){
-            while(tasks.length){
-                const t = tasks.shift();
-                if(!(t.key in tsDataCache)){
-                    $("#pv-status").text("Reading " + quarterName(t.id) + " " + t.p + " (" + (done + 1) + " of " + total + ")");
-                    try {
-                        const res = await fetch("https://www.washington.edu/students/timeschd/" + t.id + "/" + prefixLookup[t.p]);
-                        if(res.ok) storeHistoryPage(t.key, await res.text()); else { tsDataCache[t.key] = []; tsQuizCache[t.key] = []; }
-                    } catch(e){ tsDataCache[t.key] = []; tsQuizCache[t.key] = []; }
-                }
-                done++;
-                $("#pv-progress .pv-fill").css("width", (done / total * 100) + "%");
-                if(done % 6 === 0 && token === pvToken) drawPeriod();
+    /* ---- Reading the other quarters in the background ----
+       Once a prefix is loaded, every page these views and the time series use is read in the background, three at a time,
+       newest academic years first: the last ten academic years, the last ten summers, and Time Series' 40 quarters (one
+       shared cache). The progress bar shows only when the view on screen needs pages not read yet. A saved snapshot never
+       fetches. */
+    const bgQueued = {};
+    const bg = { queue: [], total: 0, done: 0, running: 0 };
+    function wantedQuarters(){
+        const ids = [];
+        for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, ay)); });
+        for(let y = NEWEST_SUMMER; y > NEWEST_SUMMER - 10; y--) ids.push("SUM" + y);
+        histQuarters.slice().reverse().forEach(function(hq){ ids.push(hq.str); });
+        return ids.filter(function(id, i){ return id !== currQuarterId && ids.indexOf(id) === i; });
+    }
+    function tsQuarterIds(){ return histQuarters.filter(inTsMode).map(function(hq){ return hq.str; }); }
+    /* The quarters the view on screen needs. */
+    function neededQuarters(){
+        const ids = [];
+        if(viewMode === "year") YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, pvYear)); });
+        if(viewMode === "decade") for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, ay)); });
+        if(viewMode === "summers") for(let y = NEWEST_SUMMER; y > NEWEST_SUMMER - 10; y--) ids.push("SUM" + y);
+        if(isSeriesView()) return tsQuarterIds();
+        return ids;
+    }
+    function missingFor(ids){
+        const out = [];
+        ids.forEach(function(id){ if(id === currQuarterId) return; activePrefixes.forEach(function(p){ if(!((id + "_" + p) in tsDataCache)) out.push(id + "_" + p); }); });
+        return out;
+    }
+    function startBackground(){
+        if(SNAPSHOT) return;
+        wantedQuarters().forEach(function(id){
+            activePrefixes.forEach(function(p){
+                const key = id + "_" + p;
+                if(key in tsDataCache || bgQueued[key]) return;
+                bgQueued[key] = true;
+                bg.queue.push({ id: id, p: p, key: key });
+                bg.total++;
+            });
+        });
+        while(bg.running < 3 && bg.queue.length) runBackground();
+    }
+    async function runBackground(){
+        bg.running++;
+        while(bg.queue.length){
+            const t = bg.queue.shift();
+            if(!(t.key in tsDataCache)){
+                try {
+                    const res = await fetch("https://www.washington.edu/students/timeschd/" + t.id + "/" + prefixLookup[t.p]);
+                    if(res.ok) storeHistoryPage(t.key, await res.text()); else { tsDataCache[t.key] = []; tsQuizCache[t.key] = []; }
+                } catch(e){ tsDataCache[t.key] = []; tsQuizCache[t.key] = []; }
             }
+            bg.done++;
+            afterBackgroundPage();
+        }
+        bg.running--;
+    }
+    /* After each page: the progress bar, if the view on screen is waiting; and that view, once it has what it needs. */
+    let needsWereMet = true;
+    function afterBackgroundPage(){
+        const waiting = missingFor(neededQuarters()).length;
+        if(waiting) showProgress(); else $("#bg-progress").hide();
+        if(isPeriodView() && (!waiting || bg.done % 6 === 0)) drawPeriod();
+        if(isSeriesView() && !waiting && !needsWereMet) seriesReady();
+        needsWereMet = !waiting;
+    }
+    function showProgress(){
+        $("#bg-progress").css("display", "flex").find(".pv-fill").css("width", (bg.total ? bg.done / bg.total * 100 : 0) + "%");
+        $("#bg-status").text("Reading the last ten years from the Time Schedule: " + bg.done + " of " + bg.total + " pages");
+    }
+    function renderPeriod(){
+        const waiting = !SNAPSHOT && missingFor(neededQuarters()).length > 0;
+        needsWereMet = !waiting;
+        if(waiting){ startBackground(); showProgress(); } else $("#bg-progress").hide();
+        if(isPeriodView()) drawPeriod();
+        if(isSeriesView()){ if(waiting) $("#ts-course-select").prop("disabled", true); else seriesReady(); }
+    }
+
+    /* ---- AY and summer time series ----
+       Ben's Time Series, in two modes: the academic year's quarters only (summer left out), and summers only. The course
+       picker lists every course offered in the loaded prefixes over those quarters, whole courses only (the instructor
+       checkboxes follow one instructor), with when it was last taught if that wasn't the latest quarter. Courses excluded
+       everywhere aren't listed. */
+    function isSeriesView(){ return viewMode === "ayseries" || viewMode === "sumseries"; }
+    function inTsMode(hq){ return tsMode === "summer" ? hq.q === "SUM" : hq.q !== "SUM"; }
+    /* Ben's plot and instructor list walk histQuarters; for each call it holds only this mode's quarters. */
+    function withTsQuarters(fn){
+        return function(){
+            const all = histQuarters.slice();
+            histQuarters.length = 0;
+            Array.prototype.push.apply(histQuarters, all.filter(inTsMode));
+            try { return fn.apply(this, arguments); }
+            finally { histQuarters.length = 0; Array.prototype.push.apply(histQuarters, all); }
         };
-        await Promise.all([worker(), worker(), worker()]);
-        if(token === pvToken){ $("#pv-progress").hide(); drawPeriod(); }
+    }
+    plotTimeSeries = withTsQuarters(plotTimeSeries);
+    renderTsInstructorFilters = withTsQuarters(renderTsInstructorFilters);
+    loadTimeSeriesData = withTsQuarters(loadTimeSeriesData);   /* its list of pages to fetch is made before its first wait */
+    function seriesReady(){
+        const sel = $("#ts-course-select");
+        sel.prop("disabled", false);
+        if(!sel.data("select2")) return;
+        const courses = {};
+        let newest = -1;
+        histQuarters.filter(inTsMode).forEach(function(hq){
+            activePrefixes.forEach(function(p){
+                const rows = hq.str === currQuarterId ? rawData.filter(function(d){ return d.prefix === p; }) : (tsDataCache[hq.str + "_" + p] || []).filter(function(d){ return d.prefix === p; });
+                rows.forEach(function(d){
+                    const k = d.prefix + "|" + d.number, idx = qIndex(hq.str), c = courses[k] || (courses[k] = { p: d.prefix, n: d.number, name: d.name, last: -1, lastId: "" });
+                    if(idx >= c.last){ c.last = idx; c.lastId = hq.str; c.name = d.name; }
+                    if(idx > newest) newest = idx;
+                });
+            });
+        });
+        const keys = Object.keys(courses).filter(function(k){ return excludedCourses.indexOf(k.replace("|", " ")) === -1; }).sort(function(a, b){ return a.localeCompare(b, "en", { numeric: true }); });
+        const kept = (sel.val() || []).filter(function(v){ return keys.indexOf(v) !== -1; });
+        sel.empty().append(keys.map(function(k){
+            const c = courses[k], when = c.last < newest ? " · last taught " + c.lastId.slice(0, 1) + c.lastId.slice(1, 3).toLowerCase() + " " + c.lastId.slice(3) : "";
+            return $("<option></option>").val(k).text(c.p + " " + c.n + " - " + c.name + when);
+        }));
+        sel.val(kept).trigger("change");
     }
     function setView(v){
         viewMode = v;
         $(".view-seg button").each(function(){ const on = $(this).attr("data-view") === v; $(this).toggleClass("on", on).attr("aria-pressed", String(on)); });
-        const series = v === "series";
+        const series = isSeriesView();
+        if(series) tsMode = v === "sumseries" ? "summer" : "ay";
         if($("#ts-toggle").is(":checked") !== series) $("#ts-toggle").prop("checked", series).trigger("change");
         document.body.classList.toggle("pv-on", isPeriodView());
-        if(!isPeriodView()) $("#pv-progress").hide();
         renderPeriod();
     }
     $(document).on("click", ".view-seg button", function(){ setView($(this).attr("data-view")); });
@@ -679,7 +771,7 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
     $(document).on("click", ".pv-stable [data-summer]", function(){ pvSummer = +$(this).attr("data-summer"); drawSummers(); });
     /* Every redraw of the Quarter view also refreshes the Excluded bar and, when one is showing, the other views. */
     const benRenderDashboard = renderDashboard;
-    renderDashboard = function(opts){ applyCourseExclusions(); benRenderDashboard(opts); renderExclBar(); if(isPeriodView()) drawPeriod(); };
+    renderDashboard = function(opts){ applyCourseExclusions(); benRenderDashboard(opts); renderExclBar(); startBackground(); if(isPeriodView() || isSeriesView()) renderPeriod(); };
 """
 
 insert('(async function(){\n', START, where='after')
@@ -705,12 +797,18 @@ insert('<div class="ts-toggle-container"><span>Current</span><label class="switc
     + '<button type="button" data-view="quarter" class="on" aria-pressed="true" title="This quarter, section by section">Quarter</button>'
     + '<button type="button" data-view="year" aria-pressed="false" title="Autumn, Winter and Spring of one academic year">Year</button>'
     + '<button type="button" data-view="decade" aria-pressed="false" title="The last ten academic years, quarter by quarter">Decade</button>'
+    + '<button type="button" data-view="ayseries" aria-pressed="false" title="Chosen courses over ten years, Autumn, Winter and Spring">AY time series</button>'
     + '<button type="button" data-view="summers" aria-pressed="false" title="The last ten summers">Summers</button>'
-    + '<button type="button" data-view="series" aria-pressed="false" title="Chosen courses, quarter by quarter, over ten years">Time series</button>'
+    + '<button type="button" data-view="sumseries" aria-pressed="false" title="Chosen courses over the last ten summers">Summer time series</button>'
     + '<input type="checkbox" id="ts-toggle" hidden></div>'
     + '<div class="snap-tools"><button type="button" id="snap-save" class="snap-btn" disabled title="Load a prefix first">' + ICON + 'Save snapshot<span id="snap-asof" class="snap-asof"></span></button></div>', replace=True)
 insert('<div id="active-prefix-chips"></div>', '<div id="excl-bar" class="excl-bar" style="display:none"></div>', where='after')
-insert('<div class="stats-row">', '<div id="pv-progress"><div class="pv-bar"><div class="pv-fill"></div></div><span id="pv-status"></span></div><div id="period-view"></div>')
+insert('<div class="stats-row">', '<div id="period-view"></div>')
+insert('<div id="current-quarter-view">', '<div id="bg-progress"><div class="pv-bar"><div class="pv-fill"></div></div><span id="bg-status"></span></div>')
+# Time series: whole courses only (see seriesReady), and full-size summer points in the summer time series.
+insert('pref + " " + num + " (all sections)"', 'pref + " " + num', replace=True)
+insert('placeholder: "Select courses or sections to compare...",', 'placeholder: "Select courses to compare...",', replace=True)
+insert('if(hq.q === "SUM")', 'if(hq.q === "SUM" && tsMode !== "summer")', replace=True)
 # Parser: a section's "to be arranged" meeting and variable credits, the signs of independent study.
 insert('const section = slnMatch[2];', r'''
                 const credTok = (line.slice(line.indexOf(slnMatch[0]) + slnMatch[0].length).trim().split(/\s+/)[0] || "");

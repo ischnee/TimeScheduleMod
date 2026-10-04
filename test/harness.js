@@ -14,7 +14,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
    addresses pointed here. Each fetch of the current quarter's page adds 1 to PHIL 100 A's enrollment, so a reload
    shows up in the numbers; /__signout makes that page a sign-in page with no sections. */
 function startServer() {
-  let fetches = 0, signedOut = false;
+  let fetches = 0, signedOut = false, clasDelay = 0;   // clasDelay: slows past CLAS pages, to see the background reading
   const past = { AUT2025: -3, WIN2026: -5, SPR2026: -7, AUT2024: -9 };
   const server = http.createServer((req, res) => {
     if (req.url === '/dash' || req.url === '/dash-phil') {
@@ -23,7 +23,9 @@ function startServer() {
     }
     if (req.url === '/__fetches') { res.writeHead(200); return res.end(String(fetches)); }
     if (req.url === '/__signout') { signedOut = !signedOut; res.writeHead(200); return res.end(String(signedOut)); }
+    if (req.url.startsWith('/__clasdelay')) { clasDelay = +(req.url.split('=')[1] || 0); res.writeHead(200); return res.end(String(clasDelay)); }
     const c = req.url.match(/^\/students\/timeschd\/([A-Z]{3}\d{4})\/clas\.html$/);
+    if (c && clasDelay && c[1] !== 'AUT2026') { const ms = clasDelay; return setTimeout(() => { const html = page.clas.page(c[1]); if (html) { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); res.end(html); } else { res.writeHead(404); res.end('not found'); } }, ms); }
     if (c) { const html = signedOut ? null : page.clas.page(c[1]); if (html) { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(html); } res.writeHead(404); return res.end('not found'); }
     const m = req.url.match(/^\/students\/timeschd\/([A-Z]{3}\d{4})\/phil\.html$/);
     if (m && m[1] === 'AUT2026') {

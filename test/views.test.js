@@ -12,7 +12,7 @@ function expect(q, out, level) {
 const cell = e => `${e.enrl} enrolled | of ${e.lim} seats · ${e.pct} full | ${e.sections} ${e.sections === 1 ? 'section' : 'sections'} · ${e.tas} ${e.tas === 1 ? 'TA' : 'TAs'}`;
 module.exports = async (check, port) => {
   const d = await launch('views', port);
-  const settle = async () => { await d.waitFor('$("#pv-progress").is(":hidden") && !/Loading…/.test($("#period-view").text())', 120); await sleep(300); };
+  const settle = async () => { await d.waitFor('$("#bg-progress").is(":hidden") && !/Loading…/.test($("#period-view").text())', 120); await sleep(300); };
   const cells = () => d.evaluate('$(".pv-table tbody tr").map(function(){ return [[$(this).find("th").text()].concat($(this).find("td").map(function(){ return this.innerText.trim().replace(/\\n+/g, " | "); }).get())]; }).get()');
   const cards = sel => d.evaluate(`$(${JSON.stringify(sel)} + " .pv-card .pv-v").map(function(){ return $(this).text(); }).get().join(" / ")`);
   try {
@@ -22,7 +22,7 @@ module.exports = async (check, port) => {
     await sleep(300);
     const head = await d.evaluate('({ links: $(".dashboard-links").length, text: $(".dashboard-header").text(), views: $(".view-seg button").map(function(){ return $(this).text(); }).get().join(","), asofInButton: $("#snap-save #snap-asof").length === 1 && / · as of /.test($("#snap-asof").text()) })');
     check('the All Departments and CAS links are gone', head.links === 0 && !/All Departments|CAS Curriculum/.test(head.text), head);
-    check('view buttons: Quarter, Year, Decade, Summers, Time series', head.views === 'Quarter,Year,Decade,Summers,Time series', head.views);
+    check('view buttons: Quarter, Year, Decade, AY time series, Summers, Summer time series', head.views === 'Quarter,Year,Decade,AY time series,Summers,Summer time series', head.views);
     check('the data time sits inside Save snapshot', head.asofInButton, head);
 
     check('CLAS 484 suggested as independent study', /Look like independent study: CLAS 484/.test(await d.evaluate('$("#excl-bar").text()')), await d.evaluate('$("#excl-bar").text()'));
@@ -87,8 +87,8 @@ module.exports = async (check, port) => {
     await d.click('.view-seg [data-view=quarter]');
     await d.click('.level-btn[data-level="all"]');
 
-    await d.click('.view-seg [data-view=series]');
-    check('Time series still opens from its button', await d.evaluate('$("#time-series-view").is(":visible") && !$("#current-quarter-view").is(":visible")'));
+    await d.click('.view-seg [data-view=ayseries]');
+    check('AY time series opens from its button', await d.evaluate('$("#time-series-view").is(":visible") && !$("#current-quarter-view").is(":visible")'));
     await d.click('.view-seg [data-view=quarter]');
     check('and Quarter comes back', await d.evaluate('$("#current-quarter-view").is(":visible") && $(".stats-row").is(":visible") && !$("#period-view").is(":visible")'));
 

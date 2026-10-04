@@ -66,7 +66,7 @@ module.exports = page;
    published yet), for the Year, Decade and Summers views. Every name and number is invented.
    clas.sections(quarter) gives each lecture section, so the tests can add up what each view should show:
    - CLAS 101 A (lim 100), with four quiz sections led by two TAs (two each): 2 TAs every quarter but summer.
-   - CLAS 210 A (lim 120) and CLAS 320 A (lim 40).
+   - CLAS 210 A (lim 120) and CLAS 320 A (lim 40); CLAS 330 A (lim 30) only in Autumn 2018 and Spring 2019.
    - CLAS 484 A and B: independent study, "to be arranged", 1-5 credits, limit 5.
    - Summer: CLAS 101 A (lim 40, no quiz sections) and CLAS 484 A.
    Enrollments vary by quarter: i counts quarters from Autumn 2016. */
@@ -82,8 +82,10 @@ function clasSections(quarter) {
   return [
     { number: '101', name: 'LATIN AND GREEK IN CURRENT USE', sec: 'A', cred: '5', meets: 'MWF    1030-1120  DEN  112', enrl: 60 + (i * 7) % 40, lim: 100, who: 'Instructor,Rho', quizzes: [['Ivy', 24], ['Ivy', 22], ['Oak', 20], ['Oak', 18]] },
     { number: '210', name: 'GREEK AND ROMAN MYTHOLOGY', sec: 'A', cred: '5', meets: 'MWF    0130-0220  DEN  211', enrl: 90 + (i * 5) % 30, lim: 120, who: 'Instructor,Sigma' },
-    { number: '320', name: 'GREEK PHILOSOPHY', sec: 'A', cred: '5', meets: 'TTh    1130-1250  DEN  213', enrl: 20 + i % 15, lim: 40, who: 'Instructor,Tau' },
-    tba('A', 1), tba('B', i % 2)];
+    { number: '320', name: 'GREEK PHILOSOPHY', sec: 'A', cred: '5', meets: 'TTh    1130-1250  DEN  213', enrl: 20 + i % 15, lim: 40, who: 'Instructor,Tau' }]
+    // A course last taught in Spring 2019, for the time series' "last taught".
+    .concat(quarter === 'AUT2018' || quarter === 'SPR2019' ? [{ number: '330', name: 'GREEK TRAGEDY', sec: 'A', cred: '5', meets: 'MW     0230-0350  DEN  209', enrl: 18, lim: 30, who: 'Instructor,Upsilon' }] : [])
+    .concat([tba('A', 1), tba('B', i % 2)]);
 }
 function clasPage(quarter) {
   const secs = clasSections(quarter);

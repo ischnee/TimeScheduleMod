@@ -25,7 +25,7 @@ module.exports = async (check, port) => {
     const requests = [];
     await d.send('Network.enable'); d.on(m => { if (m.method === 'Network.requestWillBeSent') requests.push(m.params.request.url); });
     await d.openFile(file);
-    await d.click('.view-seg [data-view=series]');
+    await d.click('.view-seg [data-view=ayseries]');
     await d.evaluate('$("#ts-course-select").val(["PHIL|100"]).trigger("change")');
     await d.waitFor('(document.getElementById("chart-timeseries").data || []).length > 0', 40);
     const t = await d.evaluate('({ note: $(".snap-nohist").text(), quarters: (document.getElementById("chart-timeseries").data || [])[0].y.filter(v => v !== null).length })');
