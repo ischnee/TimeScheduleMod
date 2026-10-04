@@ -36,7 +36,11 @@ module.exports = async (check, port) => {
     const y26 = await d.evaluate('({ head: $(".pv-year h2").text(), cols: $(".pv-col h2").map(function(){ return $(this).text(); }).get(), na: $(".pv-col .pv-na").map(function(){ return $(this).text(); }).get() })');
     check('Year opens on 2026–27, with only Autumn published', /^2026–27 1 of 3 quarters$/.test(y26.head) && y26.cols[0] === 'Autumn 2026 this quarter' && y26.na.join() === 'Not published yet,Not published yet', y26);
     check('the quarter view’s numbers carry into Year', (await cards('.pv-col[data-q=AUT2026]')) === [aut26.sections, aut26.enrl, aut26.lim, aut26.pct, aut26.tas].join(' / '), await cards('.pv-col[data-q=AUT2026]'));
-    await d.evaluate('$("#pv-year").val("2019").trigger("change")');
+    check('the Year button shows the year, with a caret', (await d.evaluate('$(".view-seg [data-view=year]").text()')) === '2026–27▾', await d.evaluate('$(".view-seg [data-view=year]").text()'));
+    await d.click('.view-seg [data-view=year]');
+    check('clicked again, it opens the ten years', (await d.evaluate('$("#pv-yearmenu button").map(function(){ return $(this).text(); }).get().join(",")')) === '2026–27,2025–26,2024–25,2023–24,2022–23,2021–22,2020–21,2019–20,2018–19,2017–18');
+    await d.click('#pv-yearmenu [data-year="2019"]');
+    check('picking one switches the year and closes the menu', (await d.evaluate('$(".view-seg [data-view=year]").text() + " " + $("#pv-yearmenu").length')) === '2019–20▾ 0');
     await settle();
     const q19 = ['AUT2019', 'WIN2020', 'SPR2020'].map(q => expect(q, ['484']));
     const yr = { sections: q19.reduce((n, e) => n + e.sections, 0), enrl: q19.reduce((n, e) => n + e.enrl, 0), lim: q19.reduce((n, e) => n + e.lim, 0), tas: 6 };
@@ -54,7 +58,7 @@ module.exports = async (check, port) => {
     check('Decade: the year column adds them up, in TA-quarters', r19[4] === `${yr.enrl} enrolled | of ${yr.lim} seats · ${(yr.enrl / yr.lim * 100).toFixed(1)}% full | ${yr.sections} sections · 6 TA-quarters`, r19[4]);
     await d.click('.pv-table td[data-q=WIN2020]');
     await settle();
-    check('clicking a quarter opens its year, with that quarter marked', (await d.evaluate('$(".view-seg .on").text() + " " + $("#pv-year").val() + " " + $(".pv-col.pv-focus").attr("data-q")')) === 'Year 2019 WIN2020');
+    check('clicking a quarter opens its year, with that quarter marked', (await d.evaluate('$(".view-seg .on").text() + " " + $(".pv-col.pv-focus").attr("data-q")')) === '2019–20▾ WIN2020', await d.evaluate('$(".view-seg .on").text() + " " + $(".pv-col.pv-focus").attr("data-q")'));
 
     await d.click('.view-seg [data-view=summers]');
     await settle();

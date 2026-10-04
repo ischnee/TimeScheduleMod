@@ -23,7 +23,7 @@ A version of Ben Marwick's **Time Schedule Viz** bookmarklet ([uw-anthro-web-hel
 - **TA names are never kept.** As each page loads, TA names become TA1, TA2, and so on. Only these labels are shown and saved.
 - **% Full dots** are drawn instead of emoji, so sections over capacity can be dark green.
 - **Views:** buttons in the header switch between **Quarter** (Ben's dashboard for the quarter you opened), **Year**, **Decade**, **AY time series**, **Summers** and **Summer time series**.
-  - **Year:** one academic year (Autumn, Winter, Spring). It shows cards for the year, then a column per quarter with its own cards and Enrolled vs Capacity chart. A menu picks the year.
+  - **Year:** one academic year (Autumn, Winter, Spring). It shows cards for the year, then a column per quarter with its own cards and Enrolled vs Capacity chart. The Year button shows the year (e.g. 2025–26 ▾); click it again to pick another of the ten.
   - **Decade:** the last ten academic years, one per row. Each quarter's cell shows enrolled, seats, % full, sections and TAs, shaded by fullness, with the year's totals in the last column. Click a cell or year to open it in Year.
   - **Summers:** the last ten summers, which are never part of a year. Click one to see its cards and chart.
   - **AY time series:** chosen courses quarter by quarter over ten years, Autumn, Winter and Spring only. The picker lists every course offered in those years, as whole courses, with "last taught" for one not offered lately. To follow one instructor, click **Clear** above the instructor list, then check that instructor.

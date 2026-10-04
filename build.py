@@ -79,7 +79,9 @@ CSS = """.snap-tools{margin-left:auto;display:flex;align-items:center;gap:12px}.
 CSS += """
 .dashboard-header{row-gap:8px}.view-seg{margin-left:auto;display:inline-flex;background:rgba(255,255,255,.12);border-radius:18px;padding:3px;gap:2px}
 .view-seg button{border:0;background:none;color:#e8e3d3;font:600 13px 'Open Sans',Arial,sans-serif;padding:5px 13px;border-radius:15px;cursor:pointer;white-space:nowrap}.view-seg button:hover{color:#fff;background:rgba(255,255,255,.12)}
-.view-seg button.on{background:#fff;color:#4b2e83}.snap-tools{flex-basis:100%;justify-content:flex-end;margin-left:0}.snap-btn .snap-asof{color:#85754d;font-weight:normal;font-size:12px}
+.view-seg button.on{background:#fff;color:#4b2e83}.view-seg .caret{margin-left:6px;font-size:11px}
+.pv-yearmenu{position:fixed;z-index:50;background:#fff;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:6px;display:flex;flex-direction:column;min-width:120px}
+.pv-yearmenu button{border:0;background:none;text-align:left;font:600 13px 'Open Sans',Arial,sans-serif;color:#2e1a5c;padding:6px 12px;border-radius:5px;cursor:pointer}.pv-yearmenu button:hover,.pv-yearmenu button:focus{background:#f0ebfa;outline:none}.pv-yearmenu button.on{background:#4b2e83;color:#fff}.snap-tools{flex-basis:100%;justify-content:flex-end;margin-left:0}.snap-btn .snap-asof{color:#85754d;font-weight:normal;font-size:12px}
 .excl-bar{flex-wrap:wrap;align-items:center;gap:6px 10px;margin:8px 25px 0;padding:8px 14px;background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.05);font-size:13px}.excl-bar[style*=block]{display:flex !important}
 .excl-bar strong{color:#4b2e83;font-size:12px;text-transform:uppercase;letter-spacing:.5px;cursor:help}
 .excl-chip{display:inline-flex;align-items:center;gap:4px;border:1px solid #b9a9e0;border-radius:12px;padding:1px 4px 1px 10px;color:#2e1a5c;font-weight:600}
@@ -609,10 +611,7 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
     }
     function drawYear(){
         const stats = YEAR_QTRS.map(function(q){ return quarterStats(qOfYear(q, pvYear)); }), year = sumStats(stats);
-        let years = "";
-        for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) years += "<option value='" + ay + "'" + (ay === pvYear ? " selected" : "") + ">" + ayLabel(ay) + "</option>";
-        $("#period-view").html("<div class='pv-head'><label>Academic year <select id='pv-year'>" + years + "</select></label><span class='pv-hint'>Autumn, Winter and Spring. Summer has its own view.</span></div>"
-            + "<div class='pv-year'><h2>" + ayLabel(pvYear) + (year.parts && year.parts < 3 ? " <span class='pv-this'>" + year.parts + " of 3 quarters</span>" : "") + "</h2>"
+        $("#period-view").html("<div class='pv-year'><h2>" + ayLabel(pvYear) + (year.parts && year.parts < 3 ? " <span class='pv-this'>" + year.parts + " of 3 quarters</span>" : "") + "</h2>"
             + (year.state === "ok" ? cardsHtml(year, "TA-quarters: each quarter’s estimate, added up (a TA in all three quarters counts 3)") : "<div class='pv-na pv-big-na'>" + (year.state === "loading" ? "Loading…" : "No sections") + "</div>") + "</div>"
             + "<div class='pv-cols'>" + stats.map(function(st, i){ return "<div class='pv-col" + (pvFocus === st.id ? " pv-focus" : "") + "' data-q='" + st.id + "'>" + quarterBlock(st, "pv-chart-" + i) + "</div>"; }).join("") + "</div>");
         stats.forEach(function(st, i){ if(st.state === "ok") drawScatter("pv-chart-" + i, st.rows); });
@@ -789,17 +788,46 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
         }));
         sel.val(kept).trigger("change");
     }
+    /* The Year button shows the year on screen, with a caret: clicked again, it opens a menu of the ten years. */
+    function updateYearChip(){
+        const b = $(".view-seg [data-view=year]");
+        if(viewMode === "year") b.html(snapEsc(ayLabel(pvYear)) + "<span class='caret' aria-hidden='true'>▾</span>").attr({ "aria-haspopup": "menu", title: "Autumn, Winter and Spring of " + ayLabel(pvYear) + ". Click to pick another academic year." });
+        else b.text("Year").removeAttr("aria-haspopup").attr("title", "Autumn, Winter and Spring of one academic year");
+    }
+    function closeYearMenu(){ $("#pv-yearmenu").remove(); $(".view-seg [data-view=year]").attr("aria-expanded", "false"); }
+    function openYearMenu(){
+        closeYearMenu();
+        const b = $(".view-seg [data-view=year]"), r = b[0].getBoundingClientRect();
+        let items = "";
+        for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) items += "<button type='button' role='menuitemradio' aria-checked='" + (ay === pvYear) + "' data-year='" + ay + "'" + (ay === pvYear ? " class='on'" : "") + ">" + ayLabel(ay) + "</button>";
+        $("<div id='pv-yearmenu' class='pv-yearmenu' role='menu' aria-label='Academic year'></div>").html(items).css({ top: r.bottom + 6, left: r.left }).appendTo("body");
+        b.attr("aria-expanded", "true");
+        $("#pv-yearmenu .on").focus();
+    }
+    $(document).on("click", "#pv-yearmenu [data-year]", function(){ pvYear = +$(this).attr("data-year"); pvFocus = null; closeYearMenu(); updateYearChip(); renderPeriod(); });
+    $(document).on("pointerdown", function(e){ if($("#pv-yearmenu").length && !$(e.target).closest("#pv-yearmenu, .view-seg [data-view=year]").length) closeYearMenu(); });
+    $(document).on("keydown", function(e){
+        const menu = $("#pv-yearmenu");
+        if(!menu.length) return;
+        if(e.key === "Escape"){ closeYearMenu(); $(".view-seg [data-view=year]").focus(); }
+        if(e.key === "ArrowDown" || e.key === "ArrowUp"){ e.preventDefault(); const items = menu.find("button"), i = items.index(document.activeElement); items.eq(Math.max(0, Math.min(items.length - 1, i + (e.key === "ArrowDown" ? 1 : -1)))).focus(); }
+    });
     function setView(v){
         viewMode = v;
+        closeYearMenu();
         $(".view-seg button").each(function(){ const on = $(this).attr("data-view") === v; $(this).toggleClass("on", on).attr("aria-pressed", String(on)); });
+        updateYearChip();
         const series = isSeriesView();
         if(series) tsMode = v === "sumseries" ? "summer" : "ay";
         if($("#ts-toggle").is(":checked") !== series) $("#ts-toggle").prop("checked", series).trigger("change");
         document.body.classList.toggle("pv-on", isPeriodView());
         renderPeriod();
     }
-    $(document).on("click", ".view-seg button", function(){ setView($(this).attr("data-view")); });
-    $(document).on("change", "#pv-year", function(){ pvYear = +this.value; pvFocus = null; renderPeriod(); });
+    $(document).on("click", ".view-seg button", function(){
+        const v = $(this).attr("data-view");
+        if(v === "year" && viewMode === "year") return $("#pv-yearmenu").length ? closeYearMenu() : openYearMenu();
+        setView(v);
+    });
     $(document).on("click", ".pv-table [data-year]", function(){ pvYear = +$(this).attr("data-year"); pvFocus = $(this).attr("data-q") || null; pvScrollOnce = true; setView("year"); });
     $(document).on("click", ".pv-stable [data-summer]", function(){ pvSummer = +$(this).attr("data-summer"); drawSummers(); });
     /* Every redraw of the Quarter view also refreshes the Excluded bar and, when one is showing, the other views. */
