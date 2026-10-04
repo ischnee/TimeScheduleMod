@@ -66,7 +66,7 @@ This short script loads the latest TimeScheduleMod from this repository each tim
 
 1. Sign in to the [UW Time Schedule](https://www.washington.edu/students/timeschd/) and open a quarter, e.g. `/timeschd/AUT2026/`.
 2. Click **TimeScheduleMod**. The dashboard opens in a new tab.
-3. Type the course prefixes you want (e.g. `PHIL, CLAS`).
+3. Type the course prefixes you want (e.g. `PHIL, CLAS`). If you clicked TimeScheduleMod on a department's page (e.g. `/timeschd/AUT2026/phil.html`), that prefix is already loaded.
 4. To keep today's numbers, click **Save snapshot**, add a note, and save.
 
 ## Privacy

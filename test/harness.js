@@ -17,8 +17,8 @@ function startServer() {
   let fetches = 0, signedOut = false;
   const past = { AUT2025: -3, WIN2026: -5, SPR2026: -7, AUT2024: -9 };
   const server = http.createServer((req, res) => {
-    if (req.url === '/dash') {
-      const html = fs.readFileSync(path.join(TMP, 'dashboard.html'), 'utf8').split('https://www.washington.edu/students/timeschd/').join(BASE + '/students/timeschd/');
+    if (req.url === '/dash' || req.url === '/dash-phil') {
+      const html = fs.readFileSync(path.join(TMP, req.url === '/dash' ? 'dashboard.html' : 'dashboard-phil.html'), 'utf8').split('https://www.washington.edu/students/timeschd/').join(BASE + '/students/timeschd/');
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(html);
     }
     if (req.url === '/__fetches') { res.writeHead(200); return res.end(String(fetches)); }

@@ -17,16 +17,19 @@ def tmpl(code):
     return code.replace('\\', '\\\\').replace('`', '\\`').replace('${', '\\${').replace('\n', '\\n')
 
 
-def insert(anchor, code, where='before', replace=False):
+def insert(anchor, code, where='before', replace=False, raw=False):
+    """raw: code goes in as written, for the bookmarklet's own code outside the template, or for template text that must
+    keep a ${...} placeholder."""
     global s
     a = anchor.replace('\n', '\\n')
     assert s.count(a) == 1, (s.count(a), anchor[:70])
+    c = code if raw else tmpl(code)
     if replace:
-        s = s.replace(a, tmpl(code))
+        s = s.replace(a, c)
     elif where == 'before':
-        s = s.replace(a, tmpl(code) + a)
+        s = s.replace(a, c + a)
     else:
-        s = s.replace(a, a + tmpl(code))
+        s = s.replace(a, a + c)
 
 
 ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M2.5 13.5h11"/></svg>'
@@ -689,6 +692,10 @@ insert('results.push({', 'if(isQuiz){ results.quiz.push({ sln: sln, prefix: curr
 insert('let rawData = [];', '\n    let quizData = [];\n    const fetchedAt = {};', where='after')
 insert('rawData = rawData.concat(added);', 'added.forEach(function(d){ d.src = p; });\n                added.quiz.forEach(function(d){ d.src = p; });\n                labelQuizLeaders(added, added.quiz);\n                quizData = quizData.concat(added.quiz);\n                fetchedAt[p] = new Date().toISOString();\n                ')
 # Header: data time and the Save snapshot button, left of the Current / Time Series switch.
+# Opened from a department's page (e.g. .../AUT2026/phil.html), the dashboard starts with that department's prefix: the
+# bookmarklet passes the page's file name, and each file belongs to exactly one prefix in prefixLookup.
+insert('r="https://www.washington.edu/students/timeschd/"+t+"/"', ',o=(window.location.pathname.match(/\\/([^\\/]+\\.html?)$/i)||[])[1]||""', where='after', raw=True)
+insert('const currQuarterId = "${t}";', '\\n    const startPage = "${o}";', where='after', raw=True)
 # Header: the All Departments and CAS Curriculum Policies links go; a row of view buttons replaces the Current / Time
 # Series switch (its checkbox stays, hidden, since Ben's code shows and hides Time Series by it); Save snapshot, with the
 # data's time inside it, gets a second row.
@@ -739,6 +746,9 @@ insert('''let emoji = (data >= 75 && data <= 100) ? "🟢" : (data > 100 || (dat
 insert('let isFetchingTS = false;', FUNCTIONS + PERIOD + '    ')
 insert('renderDashboard();\n    renderChips();\n', 'if(SNAPSHOT) applySnapshot();\n    ')
 insert('window.addEventListener("resize"', '$("#snap-save").on("click", openSaveDialog);\n    $("#ta-open").on("click", openTaBreakdown);\n    if(SNAPSHOT) applySnapshotAfter();\n    ')
+insert('window.addEventListener("resize"', r'''const startPrefix = Object.keys(prefixLookup).filter(function(p){ return prefixLookup[p].toLowerCase() === startPage.toLowerCase(); })[0];
+    if(startPrefix && !SNAPSHOT){ $("#prefix-input").val(startPrefix); parsePrefixInput(); }
+    ''')
 
 open(out, 'w', encoding='utf-8').write(s)
 print('wrote', out, len(s), 'chars')
