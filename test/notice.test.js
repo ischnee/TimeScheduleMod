@@ -26,12 +26,19 @@ module.exports = async (check, port) => {
     n = await notice();
     check('pop-up blocked: says to allow pop-ups', n && n.msg === 'Pop-up blocked! Allow pop-ups for this site, then click TimeScheduleMod again.', n);
 
-    const otherOrigin = 'http://localhost:' + new URL(BASE).port + '/cdn/bookmarklet-timeschedulemod.js';
-    const loader = LOADER.replace('https://cdn.jsdelivr.net/gh/ischnee/TimeScheduleMod@main/bookmarklet-timeschedulemod.js', otherOrigin);
+    // The README's loader with its outside addresses pointed at the test server, on another origin (localhost, not 127.0.0.1).
+    const other = 'http://localhost:' + new URL(BASE).port;
+    const withGitHub = sha => LOADER.replace('https://api.github.com/repos/ischnee/TimeScheduleMod/commits/main', other + sha).replace('https://cdn.jsdelivr.net/gh/ischnee/TimeScheduleMod@', other + '/cdn/');
+    const loader = withGitHub('/sha');
     await go(BASE + '/elsewhere');
     await run(loader);
     await d.waitFor('!!document.getElementById("tsmod-notice")', 20);
     check('the README’s loader, somewhere else: the same notice', /successfully installed/.test(((await notice()) || {}).head || ''));
+    check('…loaded at the commit GitHub names', /\/cdn\/0123456789abcdef0123456789abcdef01234567\/bookmarklet-timeschedulemod\.js$/.test(await d.evaluate('[...document.scripts].map(s => s.src).filter(Boolean).pop()')));
+    await go(BASE + '/elsewhere');
+    await run(withGitHub('/nosha'));
+    await d.waitFor('!!document.getElementById("tsmod-notice")', 20);
+    check('…and from main when GitHub doesn’t answer', /\/cdn\/main\/bookmarklet-timeschedulemod\.js\?t=\d+$/.test(await d.evaluate('[...document.scripts].map(s => s.src).filter(Boolean).pop()')));
     const dialogs = [];
     d.on(m => { if (m.method === 'Page.javascriptDialogOpening') { dialogs.push(m.params.message); d.send('Page.handleJavaScriptDialog', { accept: true }); } });
     await go(BASE + '/strict');

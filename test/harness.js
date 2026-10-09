@@ -25,6 +25,10 @@ function startServer() {
     // that blocks scripts from other sites (as many sites do), and the built bookmarklet as jsDelivr would serve it.
     if (req.url === '/elsewhere' || req.url === '/students/timeschd/' || req.url === '/students/timeschd/AUT2026/') { res.writeHead(200, { 'content-type': 'text/html' }); return res.end('<html><body><h1>' + req.url + '</h1></body></html>'); }
     if (req.url === '/strict') { res.writeHead(200, { 'content-type': 'text/html', 'content-security-policy': "script-src 'self'" }); return res.end('<html><body><h1>Strict</h1></body></html>'); }
+    // The loader's two outside calls, faked: GitHub's latest commit on main, and jsDelivr's copy at a commit (or at main).
+    if (req.url === '/sha') { res.writeHead(200, { 'content-type': 'text/plain', 'access-control-allow-origin': '*' }); return res.end('0123456789abcdef0123456789abcdef01234567'); }
+    if (req.url === '/nosha') { res.writeHead(403, { 'access-control-allow-origin': '*' }); return res.end('rate limited'); }
+    if (/^\/cdn\/([0-9a-f]{40}|main)\/bookmarklet-timeschedulemod\.js/.test(req.url)) { res.writeHead(200, { 'content-type': 'application/javascript' }); return res.end(fs.readFileSync(path.join(DIR, '..', 'bookmarklet-timeschedulemod.js'))); }
     if (req.url.startsWith('/cdn/bookmarklet-timeschedulemod.js')) { res.writeHead(200, { 'content-type': 'application/javascript' }); return res.end(fs.readFileSync(path.join(DIR, '..', 'bookmarklet-timeschedulemod.js'))); }
     if (req.url === '/__fetches') { res.writeHead(200); return res.end(String(fetches)); }
     if (req.url === '/__signout') { signedOut = !signedOut; res.writeHead(200); return res.end(String(signedOut)); }
@@ -61,7 +65,11 @@ async function connect(url) {
 async function launch(name, port) {
   const profile = path.join(TMP, 'profile-' + name), downloads = path.join(TMP, 'downloads-' + name);
   fs.rmSync(profile, { recursive: true, force: true }); fs.rmSync(downloads, { recursive: true, force: true }); fs.mkdirSync(downloads, { recursive: true });
-  const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', `--user-data-dir=${profile}`, `--remote-debugging-port=${port}`, '--window-size=1440,900', 'about:blank'], { stdio: 'ignore' });
+  /* No outside hosts but the public libraries Ben's dashboard loads (jQuery, Plotly, select2, DataTables) and, for LIVE
+     runs, GitHub's API: only this machine's test server otherwise. UW's own systems stay unreachable. */
+  const hosts = 'MAP * ~NOTFOUND, EXCLUDE 127.0.0.1, EXCLUDE localhost, EXCLUDE code.jquery.com, EXCLUDE cdn.plot.ly, EXCLUDE cdn.jsdelivr.net, EXCLUDE cdn.datatables.net'
+    + (process.env.LIVE ? ', EXCLUDE api.github.com' : '');
+  const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', `--user-data-dir=${profile}`, `--host-resolver-rules=${hosts}`, `--remote-debugging-port=${port}`, '--window-size=1440,900', 'about:blank'], { stdio: 'ignore' });
   const json = async p => (await fetch(`http://127.0.0.1:${port}${p}`)).json();
   for (let i = 0; i < 60; i++) { try { await json('/json/version'); break; } catch { await sleep(200); } }
   const browser = await connect((await json('/json/version')).webSocketDebuggerUrl);
