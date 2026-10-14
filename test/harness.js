@@ -36,6 +36,8 @@ function startServer() {
     const c = req.url.match(/^\/students\/timeschd\/([A-Z]{3}\d{4})\/clas\.html$/);
     if (c && clasDelay && c[1] !== 'AUT2026') { const ms = clasDelay; return setTimeout(() => { const html = page.clas.page(c[1]); if (html) { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); res.end(html); } else { res.writeHead(404); res.end('not found'); } }, ms); }
     if (c) { const html = signedOut ? null : page.clas.page(c[1]); if (html) { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(html); } res.writeHead(404); return res.end('not found'); }
+    const mm = req.url.match(/^\/students\/timeschd\/([A-Z]{3}\d{4})\/math\.html$/);
+    if (mm) { const html = page.math.page(mm[1]); if (html) { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(html); } res.writeHead(404); return res.end('not found'); }
     const m = req.url.match(/^\/students\/timeschd\/([A-Z]{3}\d{4})\/phil\.html$/);
     if (m && m[1] === 'AUT2026') {
       if (signedOut) { res.writeHead(200, { 'content-type': 'text/html' }); return res.end('<html><body><h1>Sign in</h1><form></form></body></html>'); }

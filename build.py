@@ -873,6 +873,10 @@ insert('<div class="ts-toggle-container"><span>Current</span><label class="switc
     + '<button type="button" data-view="sumseries" aria-pressed="false" title="Chosen courses over the last ten summers">Summer time series</button>'
     + '<input type="checkbox" id="ts-toggle" hidden></div>'
     + '<div class="snap-tools"><button type="button" id="snap-save" class="snap-btn" disabled title="Load a prefix first">' + ICON + 'Save snapshot<span id="snap-asof" class="snap-asof"></span></button></div>', replace=True)
+# Ben's section-row pattern, ^(?:[A-Za-z]+\s*)*..., can split a run of letters in exponentially many ways, so a long line
+# of plain text (a course note: MATH's pages have them) froze the page with no error (Oct 2026). Each word now has to be
+# taken whole; it matches the same lines.
+insert(r"line.match(/^(?:[A-Za-z]+\\s*)*>?", r"line.match(/^(?:[A-Za-z]+(?![A-Za-z])\\s*)*>?", replace=True, raw=True)
 insert('<div id="active-prefix-chips"></div>', '<div id="excl-bar" class="excl-bar" style="display:none"></div>', where='after')
 insert('<div class="stats-row">', '<div id="period-view"></div>')
 insert('<div id="current-quarter-view">', '<div id="bg-progress"><div class="pv-bar"><div class="pv-fill"></div></div><span id="bg-status"></span></div>')

@@ -101,3 +101,51 @@ function clasPage(quarter) {
   return out + '</body></html>';
 }
 page.clas = { page: clasPage, sections: clasSections };
+
+/* A made-up MATH department the size of a big one, for a stress test (Oct 2026: TSMod crashed on the real MATH, whose pages
+   we can't see without a UW NetID). Every name and number is invented. Per quarter, Autumn 2016 to Autumn 2026: about 150
+   lecture sections and 300 quiz sections; seminars (SM) and labs (LB); independent study, thesis and dissertation courses
+   with dozens of sections each, so their IDs run past Z (AA, AB...), some typed IS and some untyped; sections with no seats;
+   variable credits; and long course notes in plain text (the lines that froze TSMod on the real MATH: Ben's section-row
+   pattern took exponentially long on them). */
+function mathSections(quarter) {
+  const i = clasIndex(quarter);
+  if (i < 0 || i > clasIndex('AUT2026')) return null;
+  const summer = quarter.startsWith('SUM'), out = [];
+  const ids = n => Array.from({ length: n }, (_, k) => k < 26 ? String.fromCharCode(65 + k) : String.fromCharCode(64 + Math.floor(k / 26)) + String.fromCharCode(65 + k % 26));
+  const add = (number, name, lectures, quizzes, o = {}) => ids(summer ? Math.max(1, Math.ceil(lectures / 4)) : lectures).forEach((sec, k) => out.push(Object.assign({
+    number, name, sec, type: o.type || '', cred: o.cred || '5', meets: o.meets || 'MWF    0930-1020  SMI  120', enrl: Math.max(0, (o.lim || 160) - 12 - (i + k * 7) % 25), lim: o.lim || 160,
+    who: o.who === undefined ? 'Instructor,' + names[(+number + k) % names.length] : o.who, quizzes: summer ? 0 : quizzes }, o.extra || {})));
+  add('098', 'INTERMEDIATE ALGEBRA', 2, 0, { lim: 40 });
+  add('111', 'ALGEBRA WITH APPLICATIONS', 4, 4, { lim: 120 });
+  add('120', 'PRECALCULUS', 6, 4, { lim: 120 });
+  add('124', 'CALCULUS WITH ANALYTIC GEOMETRY I', 12, 6);
+  add('125', 'CALCULUS WITH ANALYTIC GEOMETRY II', 8, 6);
+  add('126', 'CALCULUS WITH ANALYTIC GEOMETRY III', 6, 6);
+  add('134', 'ACCELERATED (HONORS) CALCULUS', 1, 2, { lim: 60 });
+  ['207', '208', '209', '224'].forEach((n, k) => add(n, ['INTRODUCTION TO DIFFERENTIAL EQUATIONS', 'MATRIX ALGEBRA WITH APPLICATIONS', 'LINEAR ANALYSIS', 'ADVANCED MULTIVARIABLE CALCULUS'][k], [6, 6, 2, 4][k], k < 2 ? 3 : 0, { lim: 100 }));
+  ['300', '307', '308', '309', '318', '324', '327', '328', '334', '340', '380', '381', '394'].forEach((n, k) => add(n, 'UPPER DIVISION TOPIC ' + n, [3, 8, 8, 2, 2, 3, 2, 2, 1, 2, 1, 1, 1][k], 0, { lim: 50, meets: 'TTh    1030-1150  PDL  C38' }));
+  ['402', '403', '407', '409', '411', '424', '425', '427', '435', '441', '464', '491'].forEach((n, k) => add(n, 'ADVANCED TOPIC ' + n, 1 + k % 2, 0, { lim: 40, meets: 'MWF    1130-1220  PDL  C36' }));
+  add('480', 'MATHEMATICS LAB', 2, 0, { type: 'LB', lim: 24, cred: '3' });
+  add('498', 'SPECIAL TOPICS IN MATHEMATICS', 3, 0, { lim: 30, cred: '1-5' });
+  add('499', 'UNDERGRADUATE RESEARCH', 30, 0, { lim: 5, cred: '1-5', meets: 'to be arranged' });
+  ['504', '505', '524', '534', '544', '554', '564', '574'].forEach(n => add(n, 'GRADUATE COURSE ' + n, 1, 0, { lim: 25, cred: '3' }));
+  ['581', '582', '590'].forEach(n => add(n, 'SEMINAR ' + n, 2, 0, { type: 'SM', lim: 20, cred: '1-3' }));
+  add('600', 'INDEPENDENT STUDY OR RESEARCH', 45, 0, { type: 'IS', lim: 5, cred: '*', meets: 'to be arranged' });
+  add('700', 'MASTERS THESIS', 10, 0, { lim: 5, cred: '*', meets: 'to be arranged' });
+  add('800', 'DOCTORAL DISSERTATION', 40, 0, { lim: 5, cred: '*', meets: 'to be arranged' });
+  add('495', 'MATHEMATICS CONTEST PREPARATION', 1, 0, { lim: 0, cred: '1' });   // no seats
+  return out;
+}
+function mathPage(quarter) {
+  const secs = mathSections(quarter);
+  if (!secs) return null;
+  let sln = 40000 + clasIndex(quarter) * 900, out = `<html><head><title>MATH ${quarter}</title></head><body><h1>MATHEMATICS</h1>`, last = null;
+  secs.forEach(s => {
+    if (s.number !== last) { out += `<br><table><tr><td><A NAME=math${s.number}>MATH&nbsp;&nbsp; ${s.number} </A>&nbsp;<A HREF=/course>${s.name}</A> (NSc)</td></tr></table>`; last = s.number; }
+    out += `<table><tr><td><pre><A HREF=/sln>${sln++}</A> ${s.sec.padEnd(2)} ${s.type.padEnd(2)}  ${s.cred.padEnd(6)}${s.meets.padEnd(31)}${s.who.padEnd(22)}Open     ${String(s.enrl).padStart(3)}/ ${s.lim}      NSc${s.quizzes ? '\n                        STUDENTS MUST ALSO REGISTER FOR A QUIZ SECTION OF THIS COURSE AND ATTEND ALL MEETINGS IN PERSON' : ''}${s.number === '600' ? '\n                        CONTACT THE INSTRUCTOR BEFORE REGISTERING; ENTRY CODES ARE GIVEN ONLY WITH THE ADVISER\'S APPROVAL' : ''}</pre></td></tr></table>`;
+    for (let q = 0; q < s.quizzes; q++) out += `<table><tr><td><pre><A HREF=/sln>${sln++}</A> ${s.sec}${String.fromCharCode(65 + q)} QZ      TTh    0930-1020  SMI  211      ${('Assistant,' + names[(q + +s.number) % names.length]).padEnd(22)}Open      ${String(20 + q).padStart(2)}/ 25</pre></td></tr></table>`;
+  });
+  return out + '</body></html>';
+}
+page.math = { page: mathPage, sections: mathSections };
