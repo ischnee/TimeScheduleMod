@@ -149,3 +149,25 @@ function mathPage(quarter) {
   return out + '</body></html>';
 }
 page.math = { page: mathPage, sections: mathSections };
+
+/* The Enrollment Summary (sdb.admin.uw.edu .../tsstat.asp) for any of the made-up Time Schedule pages above: every section
+   on the page, with a room size and denied requests made up from its SLN, and quiz sections with no one in them withdrawn,
+   as the real summary marks them. Laid out like the real page: SLN, Course (two cells), Type, Title, Current Enrollment,
+   Limit, Room Capacity, Space Available, Denied Requests, Notes. */
+function summaryRows(tsHtml) {
+  const out = [];
+  for (const m of tsHtml.matchAll(/<A HREF=\/sln>(\d+)<\/A> (\w+) +(QZ|LB|SM|IS)?[^<\n]*?(\d+)\/ *(\d+)/g)) {
+    const sln = +m[1], type = m[3] || 'LC', enrl = +m[4], lim = +m[5], quiz = type === 'QZ';
+    out.push({ sln: String(sln), id: m[2], type, enrl, lim, room: lim + (sln % 4) * 10, withdrawn: quiz && enrl === 0,
+      denied: quiz ? (sln % 3 === 0 ? 1 : 0) : sln % 5 + (enrl >= lim - 2 ? 5 : 0) });
+  }
+  return out;
+}
+function summaryPage(tsHtml, prefix, quarter) {
+  const rows = summaryRows(tsHtml);
+  return `<html><head><title>Enrollment Summary</title></head><body><h1>${quarter} Enrollment Summary</h1><h2>${prefix}</h2><ul><li>To display section details, click the Schedule Line Number (SLN)</li></ul>`
+    + '<table border=1><tr><th>SLN</th><th colspan=2>Course</th><th>Type</th><th>Title</th><th>Current<br>Enrollment</th><th>Limit</th><th>Room<br>Capacity</th><th>Space<br>Available</th><th>Denied<br>Requests</th><th>Notes</th></tr>'
+    + rows.map(r => `<tr><td><a href="/sln">${r.sln}</a></td><td>${prefix} 100</td><td>${r.id}</td><td>${r.type}</td><td>A TITLE</td><td>${r.withdrawn ? 0 : r.enrl}</td><td>${r.withdrawn ? '' : r.lim}</td><td>${r.room}</td><td>${r.withdrawn ? '' : Math.max(0, r.lim - r.enrl)}</td><td>${r.denied}</td><td>${r.withdrawn ? '**Section Withdrawn**' : ''}</td></tr>`).join('')
+    + '</table></body></html>';
+}
+page.summary = { rows: summaryRows, page: summaryPage };

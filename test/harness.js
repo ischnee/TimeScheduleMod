@@ -18,7 +18,7 @@ function startServer() {
   const past = { AUT2025: -3, WIN2026: -5, SPR2026: -7, AUT2024: -9 };
   const server = http.createServer((req, res) => {
     if (req.url === '/dash' || req.url === '/dash-phil') {
-      const html = fs.readFileSync(path.join(TMP, req.url === '/dash' ? 'dashboard.html' : 'dashboard-phil.html'), 'utf8').split('https://www.washington.edu/students/timeschd/').join(BASE + '/students/timeschd/');
+      const html = fs.readFileSync(path.join(TMP, req.url === '/dash' ? 'dashboard.html' : 'dashboard-phil.html'), 'utf8').split('https://www.washington.edu/students/timeschd/').join(BASE + '/students/timeschd/').split('https://sdb.admin.uw.edu/timeschd/uwnetid/tsstat.asp').join(BASE + '/sdb/timeschd/uwnetid/tsstat.asp');
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(html);
     }
     // Pages for the wrong-page notices and the loader: somewhere else, the Time Schedule's front page, a quarter page, a page
@@ -36,6 +36,13 @@ function startServer() {
     const c = req.url.match(/^\/students\/timeschd\/([A-Z]{3}\d{4})\/clas\.html$/);
     if (c && clasDelay && c[1] !== 'AUT2026') { const ms = clasDelay; return setTimeout(() => { const html = page.clas.page(c[1]); if (html) { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); res.end(html); } else { res.writeHead(404); res.end('not found'); } }, ms); }
     if (c) { const html = signedOut ? null : page.clas.page(c[1]); if (html) { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(html); } res.writeHead(404); return res.end('not found'); }
+    // The Enrollment Summary (another site in real life), for PHIL, CLAS and MATH: built from the same made-up pages.
+    if (req.url.startsWith('/sdb/timeschd/uwnetid/tsstat.asp')) {
+      const u = new URL(req.url, BASE), q = (u.searchParams.get('QTRYR') || '').replace(/\s+/g, ''), p = (u.searchParams.get('CURRIC') || '').toUpperCase();
+      const ts = p === 'PHIL' ? (q === 'AUT2026' ? page('AUT2026', 0) : past[q] !== undefined ? page(q, past[q]) : null) : p === 'CLAS' ? page.clas.page(q) : p === 'MATH' ? page.math.page(q) : null;
+      if (!ts) { res.writeHead(404); return res.end('not found'); }
+      res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(page.summary.page(ts, p, q));
+    }
     const mm = req.url.match(/^\/students\/timeschd\/([A-Z]{3}\d{4})\/math\.html$/);
     if (mm) { const html = page.math.page(mm[1]); if (html) { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(html); } res.writeHead(404); return res.end('not found'); }
     const m = req.url.match(/^\/students\/timeschd\/([A-Z]{3}\d{4})\/phil\.html$/);

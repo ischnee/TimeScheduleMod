@@ -35,6 +35,11 @@ A version of Ben Marwick's **Time Schedule Viz** bookmarklet ([uw-anthro-web-hel
   - **Excluding:** uncheck every section of a course in the Quarter view, and that course number (e.g. PHIL 484) is left out of every quarter, view and total, including % full.
   - **The Excluded bar** under the prefixes lists these courses; × brings one back. TSMod remembers them in your browser, and snapshots keep them.
   - **Suggestions:** TSMod suggests courses whose sections all meet "to be arranged" with variable credits, the usual signs of independent study. One click excludes them.
+- **Denied requests and room size,** from the Time Schedule's Enrollment Summary:
+  - **Getting them:** the **Denied requests** card's **Get them** opens the Enrollment Summary in a new tab (sign in if asked). Click your TimeScheduleMod bookmark on that tab: it reads the summary for this quarter and the past ten years, for every prefix loaded, and sends the numbers back to the dashboard. Close the tab when it says so. (The summary is on another UW site, which doesn't let the dashboard read it directly.)
+  - **The card** shows the registration requests denied for the lecture sections counted, at how many sections, and how many more students those sections' rooms could hold (no more than were denied). Quiz sections' denials are shown separately. Hover for the sections that turned the most students away, with their seats and room size.
+  - **Year, Decade and Summers** show each quarter's denied requests too, and the Year column adds them up.
+  - **Withdrawn sections** don't count. TSMod keeps the numbers in your browser, and snapshots include them. **Update** fetches them again.
 
 ## Install
 
@@ -79,7 +84,7 @@ This short script loads the latest TimeScheduleMod from this repository each tim
 
 ## Privacy
 
-- **No student data.** TSMod reads only the Time Schedule's section listings: courses, instructors of record, and enrollment counts.
+- **No student data.** TSMod reads only the Time Schedule's section listings: courses, instructors of record, and enrollment counts. If you ask for them, it also reads the Enrollment Summary's per-section counts: denied requests and room capacity.
 - **TAs appear only as TA1, TA2…,** on screen and in saved files.
 - **Keep snapshots inside UW.** Snapshots hold section counts and instructors of record. The Time Schedule is behind a UW sign-in, so keep snapshots in a UW-shared folder.
 
@@ -101,8 +106,7 @@ This short script loads the latest TimeScheduleMod from this repository each tim
   ```
   The tests need Google Chrome and Node 20 or later. They run the dashboard in headless Chrome against a fake Time Schedule (`test/fake-time-schedule.js`), in which every name and number is invented: a PHIL department for one quarter's details, and a CLAS department with pages from 2016 to 2026 for Year, Decade and Summers.
 - **Every push reaches every user.** Everyone using the loader runs whatever is on `main` the next time they click. Keep write access to people who need it, and protect those GitHub accounts with two-factor authentication.
-- **Send updates out right away.** jsDelivr keeps a copy of the file on its servers for up to 12 hours. About a minute after pushing, open `https://purge.jsdelivr.net/gh/ischnee/TimeScheduleMod@main/bookmarklet-timeschedulemod.js` once, and everyone gets the new version on their next click.
-  - Wait the minute: purging in the first seconds after a push can put the old version straight back, before GitHub reports the new one.
+- **Updates reach users on their next click.** The loader asks GitHub for the latest commit and loads exactly that from jsDelivr. Loaders installed before October 8, 2026 load jsDelivr's copy of `main`, which can lag by up to 12 hours: about a minute after pushing, open `https://purge.jsdelivr.net/gh/ischnee/TimeScheduleMod@main/bookmarklet-timeschedulemod.js` once (only once: repeated purges get throttled and ignored).
   - The loader's timestamp (`?t=…`) stops browsers from reusing an old copy.
 - **Taking Ben's updates:** replace `ben-original.js` with his latest `bookmarklet-time-schedule-viz-generic.js`, then rebuild and test. `build.py` stops with an error if a place it changes has moved.
 

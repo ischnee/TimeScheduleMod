@@ -62,7 +62,7 @@ CSS = """.snap-tools{margin-left:auto;display:flex;align-items:center;gap:12px}.
 .snap-nohist{font-size:13px;color:#6b5a2a;background:#fbf6e6;border-radius:5px;padding:6px 10px}
 .snap-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2e1a5c;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.3);z-index:1001}
 .fill-dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}.fill-dot.low{background:#e0453c}.fill-dot.mid{background:#f59a1b}.fill-dot.full{background:#6fb14f}.fill-dot.over{background:#2d6a2e}
-.stat-card .stat-sub{font-size:12px;color:#777;margin-top:6px}.stat-card h3 .nc,.stat-card h3 .est{text-transform:none}.stat-card h3 .est{font-weight:normal;color:#888}#ta-card{cursor:help}
+.stat-card .stat-sub{font-size:12px;color:#777;margin-top:6px}.stat-card h3 .nc,.stat-card h3 .est{text-transform:none}.stat-card h3 .est{font-weight:normal;color:#888}#ta-card{cursor:help}#denied-card{cursor:help}.dn-get{margin-top:8px;border:1px solid #4b2e83;background:#fff;color:#4b2e83;border-radius:12px;padding:2px 11px;font:600 12px 'Open Sans',Arial,sans-serif;cursor:pointer}.pv-dn{color:#8a3a12}
 .ta-open{display:none;margin-top:8px;border:1px solid #4b2e83;background:#fff;color:#4b2e83;border-radius:12px;padding:2px 11px;font:600 12px 'Open Sans',Arial,sans-serif;cursor:pointer}.ta-open:hover{background:#e8e3d3}
 .ta-shade{padding-top:40px}.ta-dlg{width:min(1180px,calc(100vw - 40px));font-size:13px}.ta-body{padding:12px 20px 12px;max-height:calc(100vh - 150px);overflow:auto}
 .ta-loads{color:#555;display:flex;gap:6px 14px;flex-wrap:wrap;margin-bottom:8px}.ta-loads b{color:#4b2e83}
@@ -315,6 +315,87 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
         return ("Time Schedule " + currQuarterId + " " + ps + " " + stamp + (note ? " " + note : "")).replace(/[\\/:*?"<>|]+/g, "-").replace(/\s+/g, " ").trim().slice(0, 150) + ".html";
     }
     /* Everything the dashboard needs to reopen as it is now: the rows, the filters and selections, and (if asked) history. */
+    /* ---- Enrollment Summary: denied requests and room size (Oct 2026) ----
+       The Time Schedule's Enrollment Summary (sdb.admin.uw.edu .../tsstat.asp) adds, for each section, the room's capacity and
+       how many registration requests were denied. Its site doesn't let other sites read it, so Get them opens it in a tab; the
+       user clicks the TimeScheduleMod bookmark there, which reads that page and the same page for the dashboard's other 39
+       quarters (same site) and posts the numbers back here (see tsmSummary in the bookmarklet's own code). Kept in this
+       browser by quarter and prefix ("AUT2026_PHIL": { at, secs: { SLN: [room, denied, withdrawn] } }), and in snapshots.
+       Withdrawn sections don't count. */
+    const SUMMARY_URL = "https://sdb.admin.uw.edu/timeschd/uwnetid/tsstat.asp", SUMMARY_ORIGIN = new URL(SUMMARY_URL).origin;
+    let enrollSummary = {};
+    try { enrollSummary = SNAPSHOT ? (SNAPSHOT.summary || {}) : JSON.parse(localStorage.getItem("tsmod-enrollment-summary") || "{}") || {}; } catch(e){ enrollSummary = {}; }
+    function saveSummary(){ if(SNAPSHOT) return; try { localStorage.setItem("tsmod-enrollment-summary", JSON.stringify(enrollSummary)); } catch(e){} }
+    function summaryOf(q, d){ const s = enrollSummary[q + "_" + d.prefix]; return s && s.secs && s.secs[d.sln] ? s.secs[d.sln] : null; }
+    function hasSummary(q){ return activePrefixes.length > 0 && activePrefixes.every(function(p){ return !!enrollSummary[q + "_" + p]; }); }
+    function summaryAsOf(q){ return activePrefixes.map(function(p){ return (enrollSummary[q + "_" + p] || {}).at || ""; }).filter(Boolean).sort()[0] || ""; }
+    /* For one quarter's counted lecture sections (and their quiz sections): requests denied, and seats the rooms could still
+       hold where students were turned away (no more than were denied). null until that quarter's summary is in. */
+    function demand(q, rows, quiz){
+        if(!hasSummary(q)) return null;
+        const out = { denied: 0, quizDenied: 0, grow: 0, withdrawn: 0, top: [] };
+        rows.forEach(function(d){
+            const s = summaryOf(q, d);
+            if(!s) return;
+            if(s[2]){ out.withdrawn++; return; }
+            out.denied += s[1];
+            if(s[1] > 0){ const room = s[0] > d.lim ? s[0] - d.lim : 0; out.grow += Math.min(room, s[1]); out.top.push({ d: d, room: s[0], denied: s[1] }); }
+        });
+        (quiz || []).forEach(function(d){ const s = summaryOf(q, d); if(s && !s[2]) out.quizDenied += s[1]; });
+        out.top.sort(function(a, b){ return b.denied - a.denied || (a.d.prefix + a.d.number + a.d.section).localeCompare(b.d.prefix + b.d.number + b.d.section); });
+        return out;
+    }
+    function demandLines(dm){
+        return dm.top.slice(0, 15).map(function(t){ return t.d.prefix + " " + t.d.number + " " + t.d.section + ": " + plural(t.denied, "denied", "denied") + " · " + t.d.enrl + " of " + t.d.lim + " seats"
+            + (t.room > 0 ? " · room holds " + t.room : ""); }).concat(dm.top.length > 15 ? ["…and " + plural(dm.top.length - 15, "more section")] : []);
+    }
+    function renderDeniedCard(filtered){
+        const counted = {};
+        filtered.forEach(function(d){ counted[lectureKey(d)] = true; });
+        const dm = demand(currQuarterId, filtered, quizData.filter(function(q){ return counted[lectureKey(q)]; }));
+        $("#dn-get").toggle(!SNAPSHOT).text(dm ? "Update" : "Get them");
+        if(!dm){
+            $("#stat-denied").text("–");
+            $("#stat-denied-sub").text(SNAPSHOT ? "Not in this snapshot" : "From the Enrollment Summary");
+            $("#denied-card").attr("title", "Registration requests turned away, and room sizes, come from the Time Schedule's Enrollment Summary.\nGet them opens it in a new tab: click your TimeScheduleMod bookmark there, and it sends this quarter's and the past ten years' numbers back here.");
+            return;
+        }
+        $("#stat-denied").text(fmtN(dm.denied));
+        $("#stat-denied-sub").html(snapEsc(dm.top.length ? "at " + plural(dm.top.length, "section") + (dm.grow ? " · room for " + fmtN(dm.grow) + " more" : "") : "no section turned students away")
+            + (dm.quizDenied ? "<br>" + snapEsc("+ " + fmtN(dm.quizDenied) + " at quiz sections") : ""));
+        $("#denied-card").attr("title", ["Registration requests denied for the lecture sections counted, from the Enrollment Summary" + (summaryAsOf(currQuarterId) ? " (" + new Date(summaryAsOf(currQuarterId)).toLocaleString() + ")" : "") + "."]
+            .concat(dm.grow ? ["Rooms hold " + fmtN(dm.grow) + " more students in those sections (up to the number denied)."] : [])
+            .concat(dm.quizDenied ? ["Quiz sections: " + fmtN(dm.quizDenied) + " more denied."] : [])
+            .concat(dm.withdrawn ? [plural(dm.withdrawn, "withdrawn section") + " not counted."] : [])
+            .concat(dm.top.length ? ["", "Most denied:"].concat(demandLines(dm)) : []).join("\n"));
+    }
+    /* Get them: the Enrollment Summary for the first prefix, with what to fetch (prefixes, quarters, where to send) in its address's #. */
+    function openSummary(){
+        if(!activePrefixes.length || SNAPSHOT) return;
+        const req = { p: activePrefixes.slice(), q: histQuarters.map(function(h){ return h.str; }), o: location.origin };
+        const url = SUMMARY_URL + "?QTRYR=" + currQuarterId.slice(0, 3) + "+" + currQuarterId.slice(3) + "&CURRIC=" + encodeURIComponent(activePrefixes[0]).replace(/%20/g, "+")
+            + "#tsmod=" + encodeURIComponent(JSON.stringify(req));
+        if(!window.open(url, "_blank")) $("#stat-denied-sub").text("Pop-up blocked: allow pop-ups for this page, then Get them again");
+        else $("#stat-denied-sub").text("In the new tab, click your TimeScheduleMod bookmark");
+    }
+    window.addEventListener("message", function(e){
+        if(SNAPSHOT || e.origin !== SUMMARY_ORIGIN || !e.data || e.data.type !== "tsmod-enrollment-summary") return;
+        const num = function(v){ v = parseInt(v, 10); return isNaN(v) || v < 0 ? 0 : v; };
+        (e.data.pages || []).forEach(function(pg){
+            if(!pg || !/^[A-Z]{3}\d{4}$/.test(pg.q) || typeof pg.prefix !== "string" || !pg.secs || typeof pg.secs !== "object") return;
+            const secs = {};
+            Object.keys(pg.secs).forEach(function(sln){ const v = pg.secs[sln]; if(/^\d{4,5}$/.test(sln) && Array.isArray(v)) secs[sln] = [num(v[0]), num(v[1]), v[2] ? 1 : 0]; });
+            enrollSummary[pg.q + "_" + pg.prefix.toUpperCase()] = { at: String(pg.at || ""), secs: secs };
+        });
+        saveSummary();
+        renderDashboard();
+        if(isPeriodView()) renderPeriod();
+    });
+    function snapshotSummary(){
+        const out = {};
+        Object.keys(enrollSummary).forEach(function(k){ if(activePrefixes.indexOf(k.slice(k.indexOf("_") + 1)) !== -1) out[k] = enrollSummary[k]; });
+        return out;
+    }
     function snapshotData(note, withHistory){
         const shown = function(d){ return activePrefixes.indexOf(d.src) !== -1; };
         let history = null, quizHistory = null;
@@ -325,7 +406,7 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
         const times = {};
         activePrefixes.forEach(function(p){ times[p] = fetchedAt[p]; });
         return { version: 1, note: note, quarter: currQuarterId, dataAsOf: dataAsOf(), savedAt: new Date().toISOString(), prefixes: activePrefixes.slice(), fetchedAt: times,
-            rawData: rawData.filter(shown), quizData: quizData.filter(shown), history: history, quizHistory: quizHistory,
+            rawData: rawData.filter(shown), quizData: quizData.filter(shown), history: history, quizHistory: quizHistory, summary: snapshotSummary(),
             ui: { genEds: $(".gened-filter:checked").map(function(){ return this.value; }).get(), excludedSections: excludedSections.slice(), excludedInstructors: excludedInstructors.slice(),
                 table: dataTable ? { order: dataTable.order(), search: dataTable.search(), length: dataTable.page.len() } : null,
                 timeSeries: $("#ts-toggle").is(":checked"), tsSelected: $("#ts-course-select").val() || [], tsExcludedInstructors: tsExcludedInstructors.slice(),
@@ -560,12 +641,16 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
             return own ? excludedSections.indexOf(sectionKey(d)) === -1 : !level || d.level === level;
         });
         const enrl = rows.reduce(function(n, d){ return n + d.enrl; }, 0), lim = rows.reduce(function(n, d){ return n + d.lim; }, 0), t = taEstimate(rows, all, quiz);
-        return { id: id, rows: rows, sections: rows.length, enrl: enrl, lim: lim, pct: lim ? enrl / lim * 100 : null, tas: t.named + t.more, approx: t.more > 0, quiz: t.sections,
+        const counted = {};
+        rows.forEach(function(d){ counted[lectureKey(d)] = true; });
+        const dm = demand(id, rows, quiz.filter(function(q){ return counted[lectureKey(q)]; }));
+        return { id: id, dm: dm, rows: rows, sections: rows.length, enrl: enrl, lim: lim, pct: lim ? enrl / lim * 100 : null, tas: t.named + t.more, approx: t.more > 0, quiz: t.sections,
             state: !loaded ? "loading" : any ? "ok" : qIndex(id) > qIndex(currQuarterId) ? "future" : "none" };
     }
     function sumStats(list){
         const ok = list.filter(function(st){ return st.state === "ok"; }), enrl = ok.reduce(function(n, st){ return n + st.enrl; }, 0), lim = ok.reduce(function(n, st){ return n + st.lim; }, 0);
-        return { sections: ok.reduce(function(n, st){ return n + st.sections; }, 0), enrl: enrl, lim: lim, pct: lim ? enrl / lim * 100 : null, tas: ok.reduce(function(n, st){ return n + st.tas; }, 0),
+        const withDm = ok.filter(function(st){ return st.dm; }), dm = withDm.length ? { denied: withDm.reduce(function(n, st){ return n + st.dm.denied; }, 0), grow: withDm.reduce(function(n, st){ return n + st.dm.grow; }, 0), parts: withDm.length } : null;
+        return { dm: dm, sections: ok.reduce(function(n, st){ return n + st.sections; }, 0), enrl: enrl, lim: lim, pct: lim ? enrl / lim * 100 : null, tas: ok.reduce(function(n, st){ return n + st.tas; }, 0),
             approx: ok.some(function(st){ return st.approx; }), parts: ok.length, state: ok.length ? "ok" : list.some(function(st){ return st.state === "loading"; }) ? "loading" : "none" };
     }
     function stateText(st){
@@ -578,7 +663,9 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
         const card = function(h, v, extra){ return "<div class='pv-card'" + (extra || "") + "><h3>" + h + "</h3><div class='pv-v'>" + v + "</div></div>"; };
         return "<div class='pv-cards'>" + card("Sections", fmtN(st.sections)) + card("Enrolled", fmtN(st.enrl)) + card("Capacity", fmtN(st.lim))
             + card("Fullness", st.pct === null ? "–" : st.pct.toFixed(1) + "%")
-            + card("<span class='nc'>TAs</span> <span class='est'>(est.)</span>", (st.approx ? "≈" : "") + st.tas, taTitle ? " title='" + snapEsc(taTitle) + "'" : "") + "</div>";
+            + card("<span class='nc'>TAs</span> <span class='est'>(est.)</span>", (st.approx ? "≈" : "") + st.tas, taTitle ? " title='" + snapEsc(taTitle) + "'" : "")
+            + (st.dm ? card("Denied", fmtN(st.dm.denied), " title='" + snapEsc("Registration requests denied, from the Enrollment Summary" + (st.dm.grow ? "; rooms hold " + fmtN(st.dm.grow) + " more where students were turned away" : "")
+                + (st.dm.top && st.dm.top.length ? "\n\n" + demandLines(st.dm).join("\n") : "")) + "'") : "") + "</div>";
     }
     /* Shading by fullness: lavender to deeper purple, and dark green when over capacity, as in the % Full dots. */
     function shade(pct){ return pct === null ? "" : pct > 100 ? "background:rgba(45,106,46,.16)" : "background:rgba(75,46,131," + (0.03 + 0.2 * Math.min(pct, 100) / 100).toFixed(3) + ")"; }
@@ -586,7 +673,8 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
         if(st.state !== "ok") return "<td class='pv-cell pv-na'" + attrs + ">" + snapEsc(stateText(st)) + "</td>";
         return "<td class='pv-cell'" + attrs + " style='" + shade(st.pct) + "'><div class='pc-big'><b>" + fmtN(st.enrl) + "</b> enrolled</div>"
             + "<div>of " + fmtN(st.lim) + " seats · <b>" + (st.pct === null ? "–" : st.pct.toFixed(1) + "%") + "</b> full</div>"
-            + "<div>" + plural(st.sections, "section") + " · " + (st.approx ? "≈" : "") + st.tas + " " + (ta || (st.tas === 1 ? "TA" : "TAs")) + "</div></td>";
+            + "<div>" + plural(st.sections, "section") + " · " + (st.approx ? "≈" : "") + st.tas + " " + (ta || (st.tas === 1 ? "TA" : "TAs")) + "</div>"
+            + (st.dm ? "<div class='pv-dn'>" + fmtN(st.dm.denied) + " denied" + (st.dm.grow ? " · room for " + fmtN(st.dm.grow) : "") + "</div>" : "") + "</td>";
     }
     function scatterTraces(rows){
         const traces = [];
@@ -907,6 +995,13 @@ insert('$("#course-table").on("change", ".sec-toggle"', r'''$("#course-table").o
 # A fifth card: TAs, estimated.
 insert('<div class="stat-card"><h3>Fullness</h3><div class="value" id="stat-pct">0%</div></div>', '<div class="stat-card" id="ta-card"><h3><span class="nc">TAs</span> <span class="est">(est.)</span></h3><div class="value" id="stat-ta">0</div><div class="stat-sub" id="stat-ta-sub"></div><button type="button" id="ta-open" class="ta-open" title="Every quiz section, and how the estimate adds up">By course</button></div>', where='after')
 insert('$("#stat-pct").text(totalLim > 0 ? ((totalEnrl / totalLim) * 100).toFixed(1) + "%" : "0%");', '\n        renderTaCard(filteredData);\n        updateAsOf();', where='after')
+# The Enrollment Summary's numbers (Oct 2026): a Denied requests card after the TA card, drawn with it, and Get them.
+insert('title="Every quiz section, and how the estimate adds up">By course</button></div>', '<div class="stat-card" id="denied-card"><h3>Denied requests</h3><div class="value" id="stat-denied">–</div><div class="stat-sub" id="stat-denied-sub"></div><button type="button" id="dn-get" class="dn-get">Get them</button></div>', where='after')
+insert('renderTaCard(filteredData);', '\n        renderDeniedCard(filteredData);', where='after')
+insert('window.addEventListener("resize"', '$("#dn-get").on("click", openSummary);\n    ')
+# On the Enrollment Summary itself, the bookmarklet reads the page and the same page for the quarters and prefixes the
+# dashboard asked for (in the address after #tsmod=), and posts them to the dashboard that opened the tab.
+insert('s.querySelector("button").focus()}', r"""function tsmSummaryRows(h){var d=new DOMParser().parseFromString(h,"text/html"),t=[].filter.call(d.querySelectorAll("table"),function(x){return/Denied\s*Requests/i.test(x.textContent)})[0],o={};if(!t)return null;[].forEach.call(t.querySelectorAll("tr"),function(r){var c=[].map.call(r.querySelectorAll("td"),function(x){return x.textContent.replace(/\s+/g," ").trim()}),L=c.length,n=function(v){v=parseInt(v,10);return isNaN(v)?0:v};if(L<8||!/^\d{4,5}$/.test(c[0]))return;o[c[0]]=[n(c[L-4]),n(c[L-2]),/withdrawn/i.test(c[L-1])?1:0]});return o}function tsmSummary(){var q=null,w=window.opener;try{q=JSON.parse(decodeURIComponent((location.hash.match(/#tsmod=(.+)$/)||[])[1]||""))}catch(x){}if(!q||!q.p||!q.q||!q.o||!/^https:\/\/([a-z0-9-]+\.)*(washington|uw)\.edu$|^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(q.o))return void tsmNotice("This is the Time Schedule's Enrollment Summary. To add its denied requests and room sizes to TimeScheduleMod, click Get them on the dashboard's Denied requests card, then click TimeScheduleMod on the tab it opens.");if(!w||w.closed)return void tsmNotice("This tab lost its link to the TimeScheduleMod dashboard (signing in can do that). Close it, click Get them on the dashboard again, then click TimeScheduleMod on the new tab.");var j=[],g=[],k=0;q.p.forEach(function(p){q.q.forEach(function(r){/^[A-Z]{3}\d{4}$/.test(r)&&j.push({p:String(p),q:r})})});var u=function(){var m=document.querySelector("#tsmod-notice .msg");m&&(m.textContent="Reading the Enrollment Summary: "+k+" of "+j.length+" pages…")};tsmNotice("Reading the Enrollment Summary…");u();var f=function(){if(!j.length)return Promise.resolve();var a=j.shift();return fetch(location.pathname+"?QTRYR="+a.q.slice(0,3)+"+"+a.q.slice(3)+"&CURRIC="+encodeURIComponent(a.p).replace(/%20/g,"+"),{credentials:"include"}).then(function(r){return r.ok?r.text():""}).then(function(h){var o=h?tsmSummaryRows(h):null;o&&g.push({q:a.q,prefix:a.p,at:(new Date).toISOString(),secs:o})},function(){}).then(function(){k++,u()}).then(f)};Promise.all([f(),f(),f()]).then(function(){try{w.postMessage({type:"tsmod-enrollment-summary",pages:g},q.o),tsmNotice("Sent "+g.length+" pages of the Enrollment Summary to TimeScheduleMod. You can close this tab.")}catch(x){tsmNotice("Couldn't reach the TimeScheduleMod dashboard. Is it still open?")}})}if(/\/timeschd\/uwnetid\/tsstat\.asp/i.test(window.location.pathname))return void tsmSummary();""", where='after', raw=True)
 insert('</style>', CSS.replace('\n', ''))
 insert('<h1>UW Time Schedule Analytics</h1>', '<h1>TimeScheduleMod</h1>', replace=True)
 # The first card counts the sections still checked after every filter; "Filtered Sections" read as the ones filtered out.
