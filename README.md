@@ -22,9 +22,17 @@ A version of Ben Marwick's **Time Schedule Viz** bookmarklet ([uw-anthro-web-hel
   - **By course** opens every quiz section with the arithmetic course by course. Each section links to its Time Schedule page.
 - **TA names are never kept.** As each page loads, TA names become TA1, TA2, and so on. Only these labels are shown and saved.
 - **% Full dots** are drawn instead of emoji, so sections over capacity can be dark green.
-- **Views:** buttons in the header switch between **Quarter** (Ben's dashboard for the quarter you opened), **Year**, **Decade**, **AY time series**, **Summers** and **Summer time series**.
+- **Views:** buttons in the header switch between **Quarter** (Ben's dashboard for the quarter you opened), **Year**, **Decade**, **Sequences**, **AY time series**, **Summers** and **Summer time series**.
   - **Year:** one academic year (Autumn, Winter, Spring). It shows cards for the year, then a column per quarter with its own cards and Enrolled vs Capacity chart. The Year button shows the year (e.g. 2025–26 ▾); click it again to pick another of the ten.
   - **Decade:** the last ten academic years, one per row. Each quarter's cell shows enrolled, seats, % full, sections and TAs, shaded by fullness, with the year's totals in the last column. Click a cell or year to open it in Year.
+  - **Sequences:** a department's course sequences over the last ten academic years, for comparing one year with the next.
+    - **On top, an executive strip:** a tile per course, in order (with arrows for a sequence). Each tile shows the latest full year's students, the change since the oldest year shown, a ten-year sparkline, and the largest section now and then. A last tile totals the courses.
+    - **Below, a grid:** a row per academic year and a column per course. Each cell shows the year's students, then Autumn · Winter · Spring, then the largest lecture and quiz sections. Cells are shaded against that course's own ten years, and the last column totals the courses. Hover for each quarter's seats and sections.
+    - **Which sequences:**
+      - **MATH has its own built in**, from Andy Loveless's pathway chart and section-capacity report: Calculus (120 → 124 → 125 → 126 → 207 → 208), Non-calculus (111, 112), Remediation (102 → 103 → 120), High demand (207, 208, 224) and Upper division (300, 381, 394, 403, 407). Renumbered courses are joined: before 207 existed, its row counts MATH 307 and says so (likewise 308 → 208, 324 → 224, 310 → 300).
+      - **Any department:** sequences found from course titles (one title at one level numbered I, II, III…, e.g. ELEMENTARY SPANISH 101–103), and **Section-size growth**: the courses whose largest lecture section grew most.
+      - **Your own:** **+ Add a sequence**, with courses in order (e.g. PHIL 120, 470). Kept in your browser; × removes one.
+    - **Counts are unfiltered:** every lecture section of those courses, as the Time Schedule shows it. The Quarter view's filters and exclusions don't apply here, and summer is left out.
   - **Summers:** the last ten summers, which are never part of a year. Click one to see its cards and chart.
   - **AY time series:** chosen courses quarter by quarter over ten years, Autumn, Winter and Spring only. The picker lists every course offered in those years, as whole courses, with "last taught" for one not offered lately. To follow one instructor, click **Clear** above the instructor list, then check that instructor.
   - **Summer time series:** the same, for the last ten summers.

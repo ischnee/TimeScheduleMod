@@ -113,18 +113,26 @@ function mathSections(quarter) {
   if (i < 0 || i > clasIndex('AUT2026')) return null;
   const summer = quarter.startsWith('SUM'), out = [];
   const ids = n => Array.from({ length: n }, (_, k) => k < 26 ? String.fromCharCode(65 + k) : String.fromCharCode(64 + Math.floor(k / 26)) + String.fromCharCode(65 + k % 26));
+  // Renumbered in Autumn 2019 (as on the real MATH pages: 207 was 307, 208 was 308, 224 was 324); o.lim may grow with the quarter.
+  const renumbered = i < clasIndex('AUT2019'), num = n => renumbered && { 207: '307', 208: '308', 224: '324' }[n] || n;
   const add = (number, name, lectures, quizzes, o = {}) => ids(summer ? Math.max(1, Math.ceil(lectures / 4)) : lectures).forEach((sec, k) => out.push(Object.assign({
-    number, name, sec, type: o.type || '', cred: o.cred || '5', meets: o.meets || 'MWF    0930-1020  SMI  120', enrl: Math.max(0, (o.lim || 160) - 12 - (i + k * 7) % 25), lim: o.lim || 160,
+    number: num(number), name, sec, type: o.type || '', cred: o.cred || '5', meets: o.meets || 'MWF    0930-1020  SMI  120', enrl: Math.max(0, (typeof o.lim === 'function' ? o.lim(i) : o.lim || 160) - 12 - (i + k * 7) % 25), lim: typeof o.lim === 'function' ? o.lim(i) : o.lim || 160,
     who: o.who === undefined ? 'Instructor,' + names[(+number + k) % names.length] : o.who, quizzes: summer ? 0 : quizzes }, o.extra || {})));
   add('098', 'INTERMEDIATE ALGEBRA', 2, 0, { lim: 40 });
+  add('102', 'PRE-ALGEBRA', 1, 0, { lim: 40 });
+  add('103', 'INTRODUCTION TO ELEMENTARY FUNCTIONS', 1, 0, { lim: 40 });
   add('111', 'ALGEBRA WITH APPLICATIONS', 4, 4, { lim: 120 });
+  add('112', 'BUSINESS CALCULUS', 3, 3, { lim: 120 });
   add('120', 'PRECALCULUS', 6, 4, { lim: 120 });
-  add('124', 'CALCULUS WITH ANALYTIC GEOMETRY I', 12, 6);
+  add('124', 'CALCULUS WITH ANALYTIC GEOMETRY I', 12, 6, { lim: q => 160 + 2 * q });
   add('125', 'CALCULUS WITH ANALYTIC GEOMETRY II', 8, 6);
   add('126', 'CALCULUS WITH ANALYTIC GEOMETRY III', 6, 6);
   add('134', 'ACCELERATED (HONORS) CALCULUS', 1, 2, { lim: 60 });
-  ['207', '208', '209', '224'].forEach((n, k) => add(n, ['INTRODUCTION TO DIFFERENTIAL EQUATIONS', 'MATRIX ALGEBRA WITH APPLICATIONS', 'LINEAR ANALYSIS', 'ADVANCED MULTIVARIABLE CALCULUS'][k], [6, 6, 2, 4][k], k < 2 ? 3 : 0, { lim: 100 }));
-  ['300', '307', '308', '309', '318', '324', '327', '328', '334', '340', '380', '381', '394'].forEach((n, k) => add(n, 'UPPER DIVISION TOPIC ' + n, [3, 8, 8, 2, 2, 3, 2, 2, 1, 2, 1, 1, 1][k], 0, { lim: 50, meets: 'TTh    1030-1150  PDL  C38' }));
+  ['207', '208', '209', '224'].forEach((n, k) => add(n, ['INTRODUCTION TO DIFFERENTIAL EQUATIONS', 'MATRIX ALGEBRA WITH APPLICATIONS', 'LINEAR ANALYSIS', 'ADVANCED MULTIVARIABLE CALCULUS'][k], [6, 6, 2, 4][k], k < 2 ? 3 : 0,
+    { lim: [q => 50 + 5 * q, q => 50 + 8 * q, () => 100, q => 50 + 6 * q][k] }));
+  ['300', '309', '318', '327', '328', '334', '340', '380', '394'].forEach((n, k) => add(n, 'UPPER DIVISION TOPIC ' + n, [3, 2, 2, 2, 2, 1, 2, 1, 1][k], 0, { lim: 50, meets: 'TTh    1030-1150  PDL  C38' }));
+  add('381', 'DISCRETE MATHEMATICAL MODELING I', 1, 0, { lim: 40 });
+  add('382', 'DISCRETE MATHEMATICAL MODELING II', 1, 0, { lim: 40 });
   ['402', '403', '407', '409', '411', '424', '425', '427', '435', '441', '464', '491'].forEach((n, k) => add(n, 'ADVANCED TOPIC ' + n, 1 + k % 2, 0, { lim: 40, meets: 'MWF    1130-1220  PDL  C36' }));
   add('480', 'MATHEMATICS LAB', 2, 0, { type: 'LB', lim: 24, cred: '3' });
   add('498', 'SPECIAL TOPICS IN MATHEMATICS', 3, 0, { lim: 30, cred: '1-5' });

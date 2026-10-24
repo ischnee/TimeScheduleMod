@@ -22,7 +22,7 @@ module.exports = async (check, port) => {
     await sleep(300);
     const head = await d.evaluate('({ links: $(".dashboard-links").length, text: $(".dashboard-header").text(), views: $(".view-seg button").map(function(){ return $(this).text(); }).get().join(","), asofInButton: $("#snap-save #snap-asof").length === 1 && / · as of /.test($("#snap-asof").text()) })');
     check('the All Departments and CAS links are gone', head.links === 0 && !/All Departments|CAS Curriculum/.test(head.text), head);
-    check('view buttons: Quarter, Year, Decade, AY time series, Summers, Summer time series', head.views === 'Quarter,Year,Decade,AY time series,Summers,Summer time series', head.views);
+    check('view buttons: Quarter, Year, Decade, Sequences, AY time series, Summers, Summer time series', head.views === 'Quarter,Year,Decade,Sequences,AY time series,Summers,Summer time series', head.views);
     check('the data time sits inside Save snapshot', head.asofInButton, head);
 
     check('CLAS 484 suggested as independent study', /Look like independent study: CLAS 484/.test(await d.evaluate('$("#excl-bar").text()')), await d.evaluate('$("#excl-bar").text()'));

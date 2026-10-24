@@ -62,7 +62,7 @@ CSS = """.snap-tools{margin-left:auto;display:flex;align-items:center;gap:12px}.
 .snap-nohist{font-size:13px;color:#6b5a2a;background:#fbf6e6;border-radius:5px;padding:6px 10px}
 .snap-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2e1a5c;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.3);z-index:1001}
 .fill-dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}.fill-dot.low{background:#e0453c}.fill-dot.mid{background:#f59a1b}.fill-dot.full{background:#6fb14f}.fill-dot.over{background:#2d6a2e}
-.stat-card .stat-sub{font-size:12px;color:#777;margin-top:6px}.stat-card h3 .nc,.stat-card h3 .est{text-transform:none}.stat-card h3 .est{font-weight:normal;color:#888}#ta-card{cursor:help}#denied-card{cursor:help}.dn-get{margin-top:8px;border:1px solid #4b2e83;background:#fff;color:#4b2e83;border-radius:12px;padding:2px 11px;font:600 12px 'Open Sans',Arial,sans-serif;cursor:pointer}.pv-dn{color:#8a3a12}
+.stat-card .stat-sub{font-size:12px;color:#777;margin-top:6px}.stat-card h3 .nc,.stat-card h3 .est{text-transform:none}.stat-card h3 .est{font-weight:normal;color:#888}#ta-card{cursor:help}#denied-card{cursor:help}.sq-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:10px}.sq-chip{border:1px solid #c9bfe3;background:#fff;color:#4b2e83;border-radius:14px;padding:4px 12px;font:600 13px 'Open Sans',Arial,sans-serif;cursor:pointer}.sq-chip:hover{border-color:#4b2e83}.sq-chip.on{background:#4b2e83;color:#fff;border-color:#4b2e83}.sq-chip.found{border-style:dashed}.sq-add{border-style:dashed;border-color:#d9c48a;color:#85754d}.sq-del{border:0;background:none;color:#999;font-size:16px;line-height:1;cursor:pointer;margin-left:-6px;padding:0 4px}.sq-del:hover{color:#b42318}.sq-form{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px;font-size:13px}.sq-form[hidden]{display:none}.sq-form input{padding:5px 9px;font:inherit;border:1px solid #ccc;border-radius:5px}.sq-err{color:#b42318}.sq-strip{display:flex;align-items:stretch;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin-bottom:12px}.sq-tile{flex:1 1 0;min-width:138px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-top:4px solid #4b2e83;padding:10px 12px;font-size:12px;color:#555}.sq-tile.sq-total{border-top-color:#b7a57a;background:#fdfbf4}.sq-c{font-weight:700;color:#2e1a5c;font-size:14px}.sq-t{color:#777;min-height:2.7em;line-height:1.35}.sq-n b{font-size:22px;color:#2e1a5c}.sq-n.sq-none{color:#999;font-size:12px}.sq-d{font-weight:700;margin-top:2px}.sq-d.up{color:#1a7f37}.sq-d.down{color:#b42318}.sq-s{margin-top:2px}.sq-s span{color:#999}.sq-spark{display:block;margin:5px 0 1px}.sq-arrow{align-self:center;color:#8f7bc4;font-size:20px;font-weight:700}.sq-gap{flex:0 0 8px}.sq-table thead th{vertical-align:bottom}.sq-table thead th span{display:block;font-size:10px;text-transform:none;letter-spacing:0;color:#888;font-weight:normal;white-space:normal;max-width:150px}.sq-cell{cursor:default;height:auto;padding:8px 11px;line-height:1.35}.sq-cell .pc-big b{font-size:18px}.sq-q{font-size:11px;color:#666;white-space:nowrap}.sq-as{font-style:italic;color:#85754d;font-size:11px}.dn-get{margin-top:8px;border:1px solid #4b2e83;background:#fff;color:#4b2e83;border-radius:12px;padding:2px 11px;font:600 12px 'Open Sans',Arial,sans-serif;cursor:pointer}.pv-dn{color:#8a3a12}
 .ta-open{display:none;margin-top:8px;border:1px solid #4b2e83;background:#fff;color:#4b2e83;border-radius:12px;padding:2px 11px;font:600 12px 'Open Sans',Arial,sans-serif;cursor:pointer}.ta-open:hover{background:#e8e3d3}
 .ta-shade{padding-top:40px}.ta-dlg{width:min(1180px,calc(100vw - 40px));font-size:13px}.ta-body{padding:12px 20px 12px;max-height:calc(100vh - 150px);overflow:auto}
 .ta-loads{color:#555;display:flex;gap:6px 14px;flex-wrap:wrap;margin-bottom:8px}.ta-loads b{color:#4b2e83}
@@ -410,7 +410,7 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
             ui: { genEds: $(".gened-filter:checked").map(function(){ return this.value; }).get(), excludedSections: excludedSections.slice(), excludedInstructors: excludedInstructors.slice(),
                 table: dataTable ? { order: dataTable.order(), search: dataTable.search(), length: dataTable.page.len() } : null,
                 timeSeries: $("#ts-toggle").is(":checked"), tsSelected: $("#ts-course-select").val() || [], tsExcludedInstructors: tsExcludedInstructors.slice(),
-                excludedCourses: excludedCourses.slice(), view: viewMode, year: pvYear, summer: pvSummer, tsMode: tsMode } };
+                excludedCourses: excludedCourses.slice(), view: viewMode, year: pvYear, summer: pvSummer, tsMode: tsMode, sequences: customSeqs, seq: pvSeq } };
     }
     /* The snapshot file: this page's own source with the data in #tsv-snapshot, and its suggested file name. */
     function snapshotFile(note, withHistory){
@@ -518,6 +518,7 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
         excludedCourses = ui.excludedCourses || [];
         if(ui.year) pvYear = ui.year;
         if(ui.summer) pvSummer = ui.summer;
+        if(ui.seq) pvSeq = ui.seq;
         Object.assign(tsQuizCache, s.quizHistory || {});
         if(ui.genEds) $(".gened-filter").each(function(){ this.checked = ui.genEds.indexOf(this.value) !== -1; });
         activePrefixes.forEach(function(p){
@@ -733,11 +734,200 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
         if(viewMode === "summers") for(let y = NEWEST_SUMMER; y > NEWEST_SUMMER - 10; y--) ids.push("SUM" + y);
         return ids;
     }
-    function isPeriodView(){ return viewMode === "year" || viewMode === "decade" || viewMode === "summers"; }
+    function isPeriodView(){ return viewMode === "year" || viewMode === "decade" || viewMode === "summers" || viewMode === "sequences"; }
     function drawPeriod(){
-        if(!activePrefixes.length){ $("#period-view").html("<div class='pv-na pv-big-na'>Add a prefix above to see " + (viewMode === "summers" ? "its summers" : viewMode === "year" ? "a year" : "a decade") + ".</div>"); return; }
-        if(viewMode === "year") drawYear(); else if(viewMode === "decade") drawDecade(); else if(viewMode === "summers") drawSummers();
+        if(!activePrefixes.length){ $("#period-view").html("<div class='pv-na pv-big-na'>Add a prefix above to see " + (viewMode === "summers" ? "its summers" : viewMode === "year" ? "a year" : viewMode === "sequences" ? "its course sequences" : "a decade") + ".</div>"); return; }
+        if(viewMode === "year") drawYear(); else if(viewMode === "decade") drawDecade(); else if(viewMode === "summers") drawSummers(); else if(viewMode === "sequences") drawSequences();
     }
+    /* ---- Sequences (Oct 2026) ----
+       A department's course sequences, academic year by academic year: the courses in order (MATH 120 → 124 → 125 …), each
+       year's students per course (Autumn · Winter · Spring), and an executive strip on top: the latest full year against the
+       oldest year shown, with the largest section then and now. Built in for MATH: the pathways and watch-lists from Andy
+       Loveless's pathway chart and section-capacity report (Oct 2026), with its renumbered courses joined (207 was 307, …).
+       Any department: sequences found from course titles (one title at one level, numbered I, II, III…, e.g. ELEMENTARY
+       SPANISH 101-103), the courses whose largest section grew most, and sequences the user adds (kept in this browser).
+       Counts are lecture sections' enrollment and limits as the Time Schedule shows them, unfiltered: the Quarter view's
+       filters and exclusions don't apply here. Summer is left out, as in Year and Decade. */
+    const SEQ_PRESETS = {
+        MATH: { source: "MATH’s pathways and watch-lists, from Andy Loveless’s pathway chart and section-capacity report",
+            alias: { "307": "207", "308": "208", "324": "224", "310": "300" }, lists: [
+            { name: "Calculus", flow: true, courses: ["120", "124", "125", "126", "207", "208"], note: "The main STEM pipeline, Precalculus through Linear Algebra" },
+            { name: "Non-calculus", flow: true, courses: ["111", "112"], note: "For business, the social sciences, education and quantitative literacy" },
+            { name: "Remediation", flow: true, courses: ["102", "103", "120"], note: "Pre-algebra and elementary functions, on to Precalculus" },
+            { name: "High demand", courses: ["207", "208", "224"], note: "Where section sizes grew most" },
+            { name: "Upper division", courses: ["300", "381", "394", "403", "407"], note: "The fastest-growing 300- and 400-level courses" }] }
+    };
+    let pvSeq = null;
+    let customSeqs = (function(){ if(SNAPSHOT) return ((SNAPSHOT.ui || {}).sequences) || {}; try { return JSON.parse(localStorage.getItem("tsmod-sequences") || "{}") || {}; } catch(e){ return {}; } })();
+    function saveSeqs(){ if(SNAPSHOT) return; try { localStorage.setItem("tsmod-sequences", JSON.stringify(customSeqs)); } catch(e){} }
+    function seqYears(){ const out = []; for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) out.push(ay); return out; }
+    function titleCase(t){ return String(t).toLowerCase().replace(/(^|\s)([a-z])/g, function(m, a, b){ return a + b.toUpperCase(); }).replace(/\s(And|Of|In|With|For|To|The)\b/g, function(m){ return m.toLowerCase(); })
+        .replace(/\b(Ii|Iii|Iv|Vi|Vii)\b/g, function(m){ return m.toUpperCase(); }); }
+    /* One prefix's lecture (or quiz) rows for a quarter; null while its page isn't read yet. */
+    function seqRows(q, p, quiz){
+        if(q === currQuarterId) return (quiz ? quizData : rawData).filter(function(d){ return d.prefix === p; });
+        const key = q + "_" + p;
+        if(!(key in tsDataCache)) return null;
+        return quiz ? (tsQuizCache[key] || []) : tsDataCache[key].filter(function(d){ return d.prefix === p; });
+    }
+    /* One course in one quarter, under its old number if it was renumbered (when the new number isn't offered then). */
+    function seqCourse(p, num, q, alias){
+        if(qIndex(q) > qIndex(currQuarterId)) return { state: "future" };
+        const rows = seqRows(q, p);
+        if(rows === null) return { state: "loading" };
+        let lec = rows.filter(function(d){ return d.number === num; });
+        if(!lec.length && alias){ const old = Object.keys(alias).filter(function(k){ return alias[k] === num; }); lec = rows.filter(function(d){ return old.indexOf(d.number) !== -1; }); }
+        if(!lec.length) return { state: "none" };
+        const keys = {};
+        lec.forEach(function(d){ keys[lectureKey(d)] = true; });
+        const quiz = (seqRows(q, p, true) || []).filter(function(d){ return keys[lectureKey(d)]; });
+        return { state: "ok", q: q, enrl: lec.reduce(function(n, d){ return n + d.enrl; }, 0), lim: lec.reduce(function(n, d){ return n + d.lim; }, 0), sections: lec.length,
+            maxLec: Math.max.apply(null, lec.map(function(d){ return d.lim; })), maxQuiz: quiz.length ? Math.max.apply(null, quiz.map(function(d){ return d.lim; })) : 0, quizzes: quiz.length,
+            name: lec[0].name, from: lec[0].number };
+    }
+    /* One course in one academic year (Autumn, Winter, Spring). full: all three quarters are published. */
+    function seqYear(p, num, ay, alias){
+        const qs = YEAR_QTRS.map(function(q){ return seqCourse(p, num, qOfYear(q, ay), alias); }), ok = qs.filter(function(c){ return c.state === "ok"; });
+        const old = ok.filter(function(c){ return c.from !== num; })[0];
+        return { ay: ay, qs: qs, enrl: ok.reduce(function(n, c){ return n + c.enrl; }, 0), lim: ok.reduce(function(n, c){ return n + c.lim; }, 0), offered: ok.length,
+            maxLec: ok.length ? Math.max.apply(null, ok.map(function(c){ return c.maxLec; })) : 0, maxQuiz: ok.length ? Math.max.apply(null, ok.map(function(c){ return c.maxQuiz; })) : 0,
+            loading: qs.some(function(c){ return c.state === "loading"; }), full: qs.every(function(c){ return c.state === "ok" || c.state === "none"; }),
+            name: ok.length ? ok[ok.length - 1].name : "", from: old ? old.from : null };
+    }
+    /* Sequences found from course titles, and the courses whose largest section grew most. */
+    function detectSeqs(p){
+        const pre = SEQ_PRESETS[p], titles = {}, total = {};
+        seqYears().forEach(function(ay){ YEAR_QTRS.forEach(function(q){ (seqRows(qOfYear(q, ay), p) || []).forEach(function(d){ titles[d.number] = d.name; total[d.number] = (total[d.number] || 0) + d.enrl; }); }); });
+        const groups = {}, out = [];
+        Object.keys(titles).forEach(function(num){
+            const m = String(titles[num]).toUpperCase().match(/^(.*?\S)[\s,:-]+(I{1,3}|IV|VI{0,3}|[1-6]|[A-D])$/);
+            if(m) (groups[num.charAt(0) + "|" + m[1]] = groups[num.charAt(0) + "|" + m[1]] || []).push(num);
+        });
+        Object.keys(groups).forEach(function(k){
+            const nums = groups[k].sort();
+            if(nums.length < 2 || (pre && pre.lists.some(function(l){ return l.flow && nums.every(function(n){ return l.courses.indexOf(n) !== -1; }); }))) return;
+            out.push({ name: titleCase(k.split("|")[1]), flow: true, courses: nums, total: nums.reduce(function(t, n){ return t + (total[n] || 0); }, 0), note: "Found from course titles: " + k.split("|")[1] + " I, II…" });
+        });
+        out.sort(function(a, b){ return b.total - a.total; });
+        const years = seqYears(), grew = [];
+        Object.keys(titles).forEach(function(num){
+            const ys = years.map(function(ay){ return seqYear(p, num, ay, pre ? pre.alias : null); }).filter(function(y){ return y.offered && y.full; });
+            if(ys.length < 2) return;
+            const now = ys[0].maxLec, then = ys[ys.length - 1].maxLec;
+            if(now > then && then > 0) grew.push({ num: num, by: now - then });
+        });
+        grew.sort(function(a, b){ return b.by - a.by || a.num.localeCompare(b.num); });
+        const lists = out.slice(0, 6);
+        if(grew.length) lists.push({ name: "Section-size growth", courses: grew.slice(0, 5).map(function(g){ return g.num; }).sort(), note: "The courses whose largest lecture section grew most over the years shown" });
+        return lists;
+    }
+    function seqLists(){
+        const out = [];
+        activePrefixes.forEach(function(p){
+            const pre = SEQ_PRESETS[p], alias = pre ? pre.alias : null;
+            if(pre) pre.lists.forEach(function(l, i){ out.push(Object.assign({ id: p + ":built-in:" + i, prefix: p, kind: "built-in", alias: alias, source: pre.source }, l)); });
+            detectSeqs(p).forEach(function(l){ out.push(Object.assign({ id: p + ":found:" + l.name + ":" + l.courses.join("-"), prefix: p, kind: "found", alias: alias }, l)); });
+            (customSeqs[p] || []).forEach(function(l, i){ out.push({ id: p + ":mine:" + i, prefix: p, kind: "mine", index: i, name: l.name, flow: true, courses: l.courses, alias: alias, note: "Yours, kept in this browser" }); });
+        });
+        return out;
+    }
+    function spark(vals){
+        const pts = vals.filter(function(v){ return v !== null; });
+        if(pts.length < 2) return "";
+        const max = Math.max.apply(null, pts), min = Math.min.apply(null, pts), w = 120, h = 26, n = vals.length;
+        const xy = [];
+        vals.forEach(function(v, i){ if(v !== null) xy.push([(i / (n - 1)) * (w - 6) + 3, h - 3 - (max === min ? 0.5 : (v - min) / (max - min)) * (h - 6)]); });
+        const last = xy[xy.length - 1];
+        return "<svg class='sq-spark' width='" + w + "' height='" + h + "' viewBox='0 0 " + w + " " + h + "' aria-hidden='true'><polyline fill='none' stroke='#8f7bc4' stroke-width='1.6' points='"
+            + xy.map(function(c){ return c[0].toFixed(1) + "," + c[1].toFixed(1); }).join(" ") + "'/><circle cx='" + last[0].toFixed(1) + "' cy='" + last[1].toFixed(1) + "' r='2.6' fill='#4b2e83'/></svg>";
+    }
+    function pctChange(now, then){ if(!then) return null; return Math.round((now / then - 1) * 100); }
+    function drawSequences(){
+        const lists = seqLists();
+        const cur = lists.filter(function(l){ return l.id === pvSeq; })[0] || lists[0];
+        if(!cur){ $("#period-view").html("<div class='pv-na pv-big-na'>No sequences yet for " + snapEsc(activePrefixes.join(", ")) + ": add one with + Add a sequence.</div>" + seqChips([], null)); return; }
+        pvSeq = cur.id;
+        const years = seqYears(), many = activePrefixes.length > 1;
+        const cols = cur.courses.map(function(num){ return { num: num, ys: years.map(function(ay){ return seqYear(cur.prefix, num, ay, cur.alias); }) }; });
+        /* The latest full year, and the oldest year shown with the course in it (also full). */
+        const latestIdx = years.findIndex(function(ay, i){ return cols.some(function(c){ return c.ys[i].full && c.ys[i].offered; }); });
+        const tiles = cols.map(function(c){
+            const now = latestIdx === -1 ? null : c.ys[latestIdx], base = c.ys.slice().reverse().filter(function(y){ return y.full && y.offered; })[0];
+            const name = (c.ys.filter(function(y){ return y.name; })[0] || {}).name || "";
+            const ch = now && base && base.ay !== now.ay ? pctChange(now.enrl, base.enrl) : null;
+            return "<div class='sq-tile'><div class='sq-c'>" + snapEsc(cur.prefix + " " + c.num) + "</div><div class='sq-t'>" + snapEsc(titleCase(name)) + "</div>"
+                + (now && now.offered ? "<div class='sq-n'><b>" + fmtN(now.enrl) + "</b> students</div>" : "<div class='sq-n sq-none'>Not offered in " + (latestIdx === -1 ? "these years" : ayLabel(years[latestIdx])) + "</div>")
+                + (ch === null ? (base || !now || !now.offered ? "" : "<div class='sq-d'>New</div>") : "<div class='sq-d " + (ch > 0 ? "up" : ch < 0 ? "down" : "") + "'>" + (ch > 0 ? "+" : "") + ch + "% since " + ayLabel(base.ay) + "</div>")
+                + spark(c.ys.slice().reverse().map(function(y){ return y.full && y.offered ? y.enrl : null; }))
+                + (now && now.offered ? "<div class='sq-s'>Largest section " + now.maxLec + (base && base.ay !== now.ay && base.maxLec !== now.maxLec ? " <span>(was " + base.maxLec + ")</span>" : "") + "</div>" : "") + "</div>";
+        });
+        const totNow = latestIdx === -1 ? 0 : cols.reduce(function(n, c){ return n + c.ys[latestIdx].enrl; }, 0);
+        const baseIdx = (function(){ for(let i = years.length - 1; i > latestIdx; i--) if(cols.every(function(c){ return c.ys[i].full; }) && cols.some(function(c){ return c.ys[i].offered; })) return i; return -1; })();
+        const totThen = baseIdx === -1 ? 0 : cols.reduce(function(n, c){ return n + c.ys[baseIdx].enrl; }, 0), totCh = baseIdx === -1 ? null : pctChange(totNow, totThen);
+        const total = "<div class='sq-tile sq-total'><div class='sq-c'>All " + cols.length + " courses</div><div class='sq-t'>" + (latestIdx === -1 ? "" : ayLabel(years[latestIdx])) + "</div><div class='sq-n'><b>" + fmtN(totNow) + "</b> students</div>"
+            + (totCh === null ? "" : "<div class='sq-d " + (totCh > 0 ? "up" : totCh < 0 ? "down" : "") + "'>" + (totCh > 0 ? "+" : "") + totCh + "% since " + ayLabel(years[baseIdx]) + "</div>")
+            + spark(years.slice().reverse().map(function(ay, j){ const i = years.length - 1 - j; return cols.every(function(c){ return c.ys[i].full; }) ? cols.reduce(function(n, c){ return n + c.ys[i].enrl; }, 0) : null; })) + "</div>";
+        const strip = "<div class='sq-strip'>" + tiles.join(cur.flow ? "<span class='sq-arrow' aria-hidden='true'>→</span>" : "") + "<span class='sq-gap'></span>" + total + "</div>";
+        /* The grid: a row per academic year, a column per course, shaded against that course's own ten years. */
+        const maxOf = cols.map(function(c){ return Math.max.apply(null, c.ys.map(function(y){ return y.enrl; }).concat([1])); });
+            const cell = function(y, i){
+            if(y.loading && !y.offered) return "<td class='pv-cell pv-na'>Loading…</td>";
+            if(!y.offered) return "<td class='pv-cell pv-na'>" + (y.qs.every(function(c){ return c.state === "future"; }) ? "Not published yet" : "Not offered") + "</td>";
+            const tip = y.qs.map(function(c, k){ const q = qOfYear(YEAR_QTRS[k], y.ay);
+                return quarterName(q) + ": " + (c.state === "ok" ? fmtN(c.enrl) + " enrolled of " + fmtN(c.lim) + " seats, " + plural(c.sections, "section") + ", largest " + c.maxLec + (c.quizzes ? "; " + plural(c.quizzes, "quiz section") + ", up to " + c.maxQuiz : "") + (c.from !== cols[i].num ? " (as " + cur.prefix + " " + c.from + ")" : "")
+                    : c.state === "future" ? "not published yet" : c.state === "loading" ? "loading" : "not offered"); }).join("\n");
+            return "<td class='pv-cell sq-cell' title='" + snapEsc(tip) + "' style='background:rgba(75,46,131," + (0.03 + 0.2 * y.enrl / maxOf[i]).toFixed(3) + ")'><div class='pc-big'><b>" + fmtN(y.enrl) + "</b> students</div>"
+                + "<div class='sq-q'>" + y.qs.map(function(c){ return c.state === "ok" ? fmtN(c.enrl) : "–"; }).join(" · ") + "</div>"
+                + "<div class='sq-q'>max " + y.maxLec + (y.maxQuiz ? " · quiz " + y.maxQuiz : "") + "</div>" + (y.from ? "<div class='sq-as'>as " + snapEsc(cur.prefix + " " + y.from) + "</div>" : "") + "</td>";
+        };
+        let body = "";
+        years.forEach(function(ay, r){
+            const parts = Math.max.apply(null, cols.map(function(c){ return c.ys[r].qs.filter(function(q){ return q.state === "ok"; }).length; }));
+            const sum = cols.reduce(function(n, c){ return n + c.ys[r].enrl; }, 0), anyLoading = cols.some(function(c){ return c.ys[r].loading; });
+            body += "<tr><th class='pv-yr' data-year='" + ay + "' title='Open " + ayLabel(ay) + " in Year'>" + ayLabel(ay) + (parts && parts < 3 && cols.some(function(c){ return c.ys[r].qs.some(function(q){ return q.state === "future"; }); }) ? "<span>" + parts + " of 3 quarters</span>" : "") + "</th>"
+                + cols.map(function(c, i){ return cell(c.ys[r], i); }).join("")
+                + (anyLoading && !sum ? "<td class='pv-cell pv-na'>Loading…</td>" : "<td class='pv-cell sq-cell'><div class='pc-big'><b>" + fmtN(sum) + "</b> students</div></td>") + "</tr>";
+        });
+        $("#period-view").html(seqChips(lists, cur)
+            + "<div class='pv-head'><span class='pv-hint'>" + snapEsc((cur.note ? cur.note + ". " : "") + (cur.kind === "built-in" ? "From " + cur.source + "." : cur.kind === "found" ? "" : "") + " The tiles compare the latest full year with the oldest shown. Lecture sections’ students, as the Time Schedule shows them; summer left out.") + "</span></div>"
+            + strip
+            + "<table class='pv-table sq-table'><thead><tr><th>Academic year<span>Students in the year, then Aut · Win · Spr; the largest lecture and quiz section</span></th>" + cols.map(function(c){ const nm = (c.ys.filter(function(y){ return y.name; })[0] || {}).name || "";
+                return "<th title='" + snapEsc(titleCase(nm)) + "'>" + snapEsc(cur.prefix + " " + c.num) + "<span>" + snapEsc(titleCase(nm)) + "</span></th>"; }).join("") + "<th class='pv-tot'>" + (cur.flow ? "Sequence" : "All") + "</th></tr></thead><tbody>" + body + "</tbody></table>");
+    }
+    function seqChips(lists, cur){
+        const many = activePrefixes.length > 1;
+        return "<div class='sq-chips' role='group' aria-label='Sequences'>" + lists.map(function(l){
+            return "<button type='button' class='sq-chip" + (cur && l.id === cur.id ? " on" : "") + (l.kind === "found" ? " found" : l.kind === "mine" ? " mine" : "") + "' data-seq='" + snapEsc(l.id) + "' aria-pressed='" + String(!!(cur && l.id === cur.id)) + "' title='"
+                + snapEsc((l.note || "") + (l.kind === "found" ? " (found automatically)" : "")) + "'>" + snapEsc((many ? l.prefix + " · " : "") + l.name) + "</button>"
+                + (l.kind === "mine" && !SNAPSHOT ? "<button type='button' class='sq-del' data-del='" + l.index + "' data-p='" + snapEsc(l.prefix) + "' title='Remove " + snapEsc(l.name) + "' aria-label='Remove " + snapEsc(l.name) + "'>×</button>" : "");
+        }).join("") + (SNAPSHOT ? "" : "<button type='button' class='sq-chip sq-add' aria-expanded='false'>+ Add a sequence</button>") + "</div>"
+            + (SNAPSHOT ? "" : "<form class='sq-form' hidden><input id='sq-name' placeholder='Name (e.g. Logic)' aria-label='Name'><input id='sq-courses' size='34' placeholder='Courses in order, e.g. " + snapEsc((activePrefixes[0] || "PHIL") + " 120, 470") + "' aria-label='Courses in order'>"
+                + "<button type='submit' class='sq-chip on'>Save</button><button type='button' class='sq-chip sq-cancel'>Cancel</button><span class='sq-err'></span></form>");
+    }
+    $(document).on("click", ".sq-chip[data-seq]", function(){ pvSeq = $(this).attr("data-seq"); drawSequences(); });
+    $(document).on("click", ".sq-add", function(){ $(".sq-form").prop("hidden", false); $(this).attr("aria-expanded", "true"); $("#sq-courses").focus(); });
+    $(document).on("click", ".sq-cancel", function(){ $(".sq-form").prop("hidden", true); $(".sq-add").attr("aria-expanded", "false"); });
+    $(document).on("click", ".sq-del", function(){
+        const p = $(this).attr("data-p"), i = +$(this).attr("data-del");
+        (customSeqs[p] || []).splice(i, 1);
+        saveSeqs();
+        pvSeq = null;
+        drawSequences();
+    });
+    $(document).on("submit", ".sq-form", function(e){
+        e.preventDefault();
+        let p = activePrefixes[0];
+        const nums = [];
+        String($("#sq-courses").val() || "").toUpperCase().split(/[\s,;→>]+/).forEach(function(t){
+            if(/^\d{3}$/.test(t)) nums.push(t);
+            else if(activePrefixes.indexOf(t) !== -1 && !nums.length) p = t;
+        });
+        if(nums.length < 1){ $(".sq-err").text("Type course numbers in order, e.g. " + p + " 120, 470"); return; }
+        (customSeqs[p] = customSeqs[p] || []).push({ name: String($("#sq-name").val() || "").trim() || p + " " + nums.join("–"), courses: nums });
+        saveSeqs();
+        pvSeq = p + ":mine:" + (customSeqs[p].length - 1);
+        drawSequences();
+    });
     /* ---- Reading the other quarters in the background ----
        Once a prefix is loaded, every page these views and the time series use is read in the background, three at a time,
        newest academic years first: the last ten academic years, the last ten summers, and Time Series' 40 quarters (one
@@ -760,7 +950,7 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
     function neededQuarters(){
         const ids = [];
         if(viewMode === "year") YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, pvYear)); });
-        if(viewMode === "decade") for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, ay)); });
+        if(viewMode === "decade" || viewMode === "sequences") for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, ay)); });
         if(viewMode === "summers") for(let y = NEWEST_SUMMER; y > NEWEST_SUMMER - 10; y--) ids.push("SUM" + y);
         if(isSeriesView()) return tsQuarterIds();
         return ids;
@@ -956,6 +1146,7 @@ insert('<div class="ts-toggle-container"><span>Current</span><label class="switc
     + '<button type="button" data-view="quarter" class="on" aria-pressed="true" title="This quarter, section by section">Quarter</button>'
     + '<button type="button" data-view="year" aria-pressed="false" title="Autumn, Winter and Spring of one academic year">Year</button>'
     + '<button type="button" data-view="decade" aria-pressed="false" title="The last ten academic years, quarter by quarter">Decade</button>'
+    + '<button type="button" data-view="sequences" aria-pressed="false" title="Course sequences, year by year: built in for MATH, found from course titles elsewhere, or your own">Sequences</button>'
     + '<button type="button" data-view="ayseries" aria-pressed="false" title="Chosen courses over ten years, Autumn, Winter and Spring">AY time series</button>'
     + '<button type="button" data-view="summers" aria-pressed="false" title="The last ten summers">Summers</button>'
     + '<button type="button" data-view="sumseries" aria-pressed="false" title="Chosen courses over the last ten summers">Summer time series</button>'
