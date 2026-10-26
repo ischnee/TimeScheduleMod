@@ -39,6 +39,28 @@ module.exports = async (check, port) => {
     check('MATH 208’s largest section, now and then (as 308)', tiles[5].includes('Largest section ' + big208now + ' (was ' + big208then + ')'), { tile: tiles[5], big208now, big208then });
     check('flow arrows between the courses', await d.evaluate('$(".sq-arrow").length') === 5);
 
+    /* Picking the years the tiles compare. */
+    const pick = (id, v) => d.evaluate(`$("#${id}").val(${JSON.stringify(String(v))}).trigger("change")`);
+    const strip = () => d.evaluate('$(".sq-tile").map(function(){ return this.innerText.replace(/\\s+/g, " "); }).get()');
+    const marked = () => d.evaluate('$(".sq-table tr.sq-cmp th").map(function(){ return this.childNodes[0].textContent; }).get().join()');
+    check('by default: the latest full year and the oldest shown, both marked in the grid', (await d.evaluate('$("#sq-now option:selected").text() + " | " + $("#sq-then option:selected").text()')) === 'Latest (2025–26) | Oldest shown (2017–18)' && (await marked()) === '2025–26,2017–18', await marked());
+    check('only whole years can be picked', (await d.evaluate('$("#sq-now option").map(function(){ return this.value; }).get().join()')) === ',2025,2024,2023,2022,2021,2020,2019,2018,2017');
+    await pick('sq-then', 2021);
+    let t = await strip();
+    const ch124b = Math.round((yearTotal(2025, ['124']) / yearTotal(2021, ['124']) - 1) * 100);
+    const all6 = ['120', '124', '125', '126', '207', '208'], chAll = Math.round((yearTotal(2025, all6) / yearTotal(2021, all6) - 1) * 100);
+    check('compared with 2021–22: each tile and the total', t[1].includes((ch124b > 0 ? '+' : '') + ch124b + '% since 2021–22') && t[6].includes((chAll > 0 ? '+' : '') + chAll + '% since 2021–22') && (await marked()) === '2025–26,2021–22', { t1: t[1], t6: t[6], ch124b, chAll });
+    await pick('sq-now', 2023);
+    t = await strip();
+    const ch124c = Math.round((yearTotal(2023, ['124']) / yearTotal(2021, ['124']) - 1) * 100);
+    check('2023–24 against 2021–22', t[1].includes(fmt(yearTotal(2023, ['124'])) + ' students') && t[1].includes((ch124c > 0 ? '+' : '') + ch124c + '% since 2021–22') && t[6].includes('2023–24'), { t1: t[1], ch124c });
+    check('the choice is kept in this browser', (await d.evaluate('localStorage.getItem("tsmod-seq-compare")')) === '{"now":2023,"then":2021}');
+    await pick('sq-then', 2024);
+    check('a later year picked as the base: the two swap', (await strip())[1].includes('since 2023–24') && (await marked()) === '2024–25,2023–24', await marked());
+    await pick('sq-now', '');
+    await pick('sq-then', '');
+    check('back to the defaults', (await strip())[1].includes('since 2017–18') && (await d.evaluate('localStorage.getItem("tsmod-seq-compare")')) === '{"now":null,"then":null}');
+
     await d.click('.sq-chip[data-seq*="Discrete Mathematical Modeling"]');
     check('found from titles: DISCRETE MATHEMATICAL MODELING I and II', (await d.evaluate('$(".sq-table thead th").map(function(){ return this.childNodes[0].textContent; }).get().join("|")')) === 'Academic year|MATH 381|MATH 382|Sequence');
     await d.click('.sq-chip[data-seq*="Section-size growth"]');
