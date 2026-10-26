@@ -103,20 +103,21 @@ function clasPage(quarter) {
 page.clas = { page: clasPage, sections: clasSections };
 
 /* A made-up MATH department the size of a big one, for a stress test (Oct 2026: TSMod crashed on the real MATH, whose pages
-   we can't see without a UW NetID). Every name and number is invented. Per quarter, Autumn 2016 to Autumn 2026: about 150
+   we can't see without a UW NetID). Every name and number is invented. Per quarter, Autumn 2006 to Autumn 2026: about 150
    lecture sections and 300 quiz sections; seminars (SM) and labs (LB); independent study, thesis and dissertation courses
    with dozens of sections each, so their IDs run past Z (AA, AB...), some typed IS and some untyped; sections with no seats;
    variable credits; and long course notes in plain text (the lines that froze TSMod on the real MATH: Ben's section-row
    pattern took exponentially long on them). */
 function mathSections(quarter) {
   const i = clasIndex(quarter);
-  if (i < 0 || i > clasIndex('AUT2026')) return null;
+  if (i < clasIndex('AUT2006') || i > clasIndex('AUT2026')) return null;
+  const g = Math.max(i, 0);   // before Autumn 2016, sizes stay at 2016's (the numbers from 2016 on are unchanged)
   const summer = quarter.startsWith('SUM'), out = [];
   const ids = n => Array.from({ length: n }, (_, k) => k < 26 ? String.fromCharCode(65 + k) : String.fromCharCode(64 + Math.floor(k / 26)) + String.fromCharCode(65 + k % 26));
   // Renumbered in Autumn 2019 (as on the real MATH pages: 207 was 307, 208 was 308, 224 was 324); o.lim may grow with the quarter.
   const renumbered = i < clasIndex('AUT2019'), num = n => renumbered && { 207: '307', 208: '308', 224: '324' }[n] || n;
   const add = (number, name, lectures, quizzes, o = {}) => ids(summer ? Math.max(1, Math.ceil(lectures / 4)) : lectures).forEach((sec, k) => out.push(Object.assign({
-    number: num(number), name, sec, type: o.type || '', cred: o.cred || '5', meets: o.meets || 'MWF    0930-1020  SMI  120', enrl: Math.max(0, (typeof o.lim === 'function' ? o.lim(i) : o.lim || 160) - 12 - (i + k * 7) % 25), lim: typeof o.lim === 'function' ? o.lim(i) : o.lim || 160,
+    number: num(number), name, sec, type: o.type || '', cred: o.cred || '5', meets: o.meets || 'MWF    0930-1020  SMI  120', enrl: Math.max(0, (typeof o.lim === 'function' ? o.lim(g) : o.lim || 160) - 12 - ((i + k * 7) % 25 + 25) % 25), lim: typeof o.lim === 'function' ? o.lim(g) : o.lim || 160,
     who: o.who === undefined ? 'Instructor,' + names[(+number + k) % names.length] : o.who, quizzes: summer ? 0 : quizzes }, o.extra || {})));
   add('098', 'INTERMEDIATE ALGEBRA', 2, 0, { lim: 40 });
   add('102', 'PRE-ALGEBRA', 1, 0, { lim: 40 });

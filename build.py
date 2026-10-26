@@ -62,7 +62,7 @@ CSS = """.snap-tools{margin-left:auto;display:flex;align-items:center;gap:12px}.
 .snap-nohist{font-size:13px;color:#6b5a2a;background:#fbf6e6;border-radius:5px;padding:6px 10px}
 .snap-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2e1a5c;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.3);z-index:1001}
 .fill-dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}.fill-dot.low{background:#e0453c}.fill-dot.mid{background:#f59a1b}.fill-dot.full{background:#6fb14f}.fill-dot.over{background:#2d6a2e}
-.stat-card .stat-sub{font-size:12px;color:#777;margin-top:6px}.stat-card h3 .nc,.stat-card h3 .est{text-transform:none}.stat-card h3 .est{font-weight:normal;color:#888}#ta-card{cursor:help}#denied-card{cursor:help}.sq-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:10px}.sq-chip{border:1px solid #c9bfe3;background:#fff;color:#4b2e83;border-radius:14px;padding:4px 12px;font:600 13px 'Open Sans',Arial,sans-serif;cursor:pointer}.sq-chip:hover{border-color:#4b2e83}.sq-chip.on{background:#4b2e83;color:#fff;border-color:#4b2e83}.sq-chip.found{border-style:dashed}.sq-add{border-style:dashed;border-color:#d9c48a;color:#85754d}.sq-del{border:0;background:none;color:#999;font-size:16px;line-height:1;cursor:pointer;margin-left:-6px;padding:0 4px}.sq-del:hover{color:#b42318}.sq-form{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px;font-size:13px}.sq-form[hidden]{display:none}.sq-form input{padding:5px 9px;font:inherit;border:1px solid #ccc;border-radius:5px}.sq-err{color:#b42318}.sq-strip{display:flex;align-items:stretch;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin-bottom:12px}.sq-tile{flex:1 1 0;min-width:138px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-top:4px solid #4b2e83;padding:10px 12px;font-size:12px;color:#555}.sq-tile.sq-total{border-top-color:#b7a57a;background:#fdfbf4}.sq-c{font-weight:700;color:#2e1a5c;font-size:14px}.sq-t{color:#777;min-height:2.7em;line-height:1.35}.sq-n b{font-size:22px;color:#2e1a5c}.sq-n.sq-none{color:#999;font-size:12px}.sq-d{font-weight:700;margin-top:2px}.sq-d.up{color:#1a7f37}.sq-d.down{color:#b42318}.sq-s{margin-top:2px}.sq-s span{color:#999}.sq-spark{display:block;margin:5px 0 1px}.sq-arrow{align-self:center;color:#8f7bc4;font-size:20px;font-weight:700}.sq-gap{flex:0 0 8px}.sq-table thead th{vertical-align:bottom}.sq-table thead th span{display:block;font-size:10px;text-transform:none;letter-spacing:0;color:#888;font-weight:normal;white-space:normal;max-width:150px}.sq-cell{cursor:default;height:auto;padding:8px 11px;line-height:1.35}.sq-cell .pc-big b{font-size:18px}.sq-q{font-size:11px;color:#666;white-space:nowrap}.sq-cmp-pick select{font-weight:600}.sq-table tr.sq-cmp th.pv-yr{box-shadow:inset 4px 0 #b7a57a}.sq-as{font-style:italic;color:#85754d;font-size:11px}.dn-get{margin-top:8px;border:1px solid #4b2e83;background:#fff;color:#4b2e83;border-radius:12px;padding:2px 11px;font:600 12px 'Open Sans',Arial,sans-serif;cursor:pointer}.pv-dn{color:#8a3a12}
+.stat-card .stat-sub{font-size:12px;color:#777;margin-top:6px}.stat-card h3 .nc,.stat-card h3 .est{text-transform:none}.stat-card h3 .est{font-weight:normal;color:#888}#ta-card{cursor:help}#denied-card{cursor:help}.sq-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:10px}.sq-chip{border:1px solid #c9bfe3;background:#fff;color:#4b2e83;border-radius:14px;padding:4px 12px;font:600 13px 'Open Sans',Arial,sans-serif;cursor:pointer}.sq-chip:hover{border-color:#4b2e83}.sq-chip.on{background:#4b2e83;color:#fff;border-color:#4b2e83}.sq-chip.found{border-style:dashed}.sq-add{border-style:dashed;border-color:#d9c48a;color:#85754d}.sq-del{border:0;background:none;color:#999;font-size:16px;line-height:1;cursor:pointer;margin-left:-6px;padding:0 4px}.sq-del:hover{color:#b42318}.sq-form{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px;font-size:13px}.sq-form[hidden]{display:none}.sq-form input{padding:5px 9px;font:inherit;border:1px solid #ccc;border-radius:5px}.sq-err{color:#b42318}.sq-strip{display:flex;align-items:stretch;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin-bottom:12px}.sq-tile{flex:1 1 0;min-width:138px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-top:4px solid #4b2e83;padding:10px 12px;font-size:12px;color:#555}.sq-tile.sq-total{border-top-color:#b7a57a;background:#fdfbf4}.sq-c{font-weight:700;color:#2e1a5c;font-size:14px}.sq-t{color:#777;min-height:2.7em;line-height:1.35}.sq-n b{font-size:22px;color:#2e1a5c}.sq-n.sq-none{color:#999;font-size:12px}.sq-d{font-weight:700;margin-top:2px}.sq-d.up{color:#1a7f37}.sq-d.down{color:#b42318}.sq-s{margin-top:2px}.sq-s span{color:#999}.sq-spark{display:block;margin:5px 0 1px}.sq-arrow{align-self:center;color:#8f7bc4;font-size:20px;font-weight:700}.sq-gap{flex:0 0 8px}.sq-table thead th{vertical-align:bottom}.sq-table thead th span{display:block;font-size:10px;text-transform:none;letter-spacing:0;color:#888;font-weight:normal;white-space:normal;max-width:150px}.sq-cell{cursor:default;height:auto;padding:8px 11px;line-height:1.35}.sq-cell .pc-big b{font-size:18px}.sq-q{font-size:11px;color:#666;white-space:nowrap}.sq-table tr.sq-cmp th.pv-yr{box-shadow:inset 4px 0 #b7a57a}.sq-timeline{display:flex;align-items:center;gap:6px;background:#2e1a5c;color:#efe9f9;border-radius:8px;padding:6px 20px 8px;margin:0 0 12px;font-size:14px;font-weight:600}.sq-timeline>span{white-space:nowrap}#sq-count{font-size:13px;font-weight:normal;color:#cbbfe6}#sq-slider{position:relative;flex:1;height:46px;margin:0 44px;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none;font-weight:normal}.sl-seg{position:absolute;top:15px;height:4px;background:#8a72d6}.sl-seg.hist{background:#56565d}.sl-seg.sel{top:13px;height:8px;background:#cdb8fa;cursor:grab}.sl-seg.sel.hist{background:#9d9da5}.sl-dot{position:absolute;top:17px;width:22px;height:22px;margin:-11px 0 0 -11px;padding:0;border-radius:50%;background:#efe9f9;border:3px solid #2e1a5c;box-shadow:0 0 0 2px #b9abd8,0 1px 5px rgba(0,0,0,.45);cursor:ew-resize}.sl-dot:focus-visible{outline:none;box-shadow:0 0 0 2px #b9abd8,0 0 0 6px rgba(255,255,255,.35)}.sl-lab{position:absolute;top:30px;transform:translateX(-50%);font-size:13px;font-weight:600;color:#efe9f9;white-space:nowrap;pointer-events:none}.sl-lab.sl-end{color:rgba(255,255,255,.5);font-weight:normal}.sq-as{font-style:italic;color:#85754d;font-size:11px}.dn-get{margin-top:8px;border:1px solid #4b2e83;background:#fff;color:#4b2e83;border-radius:12px;padding:2px 11px;font:600 12px 'Open Sans',Arial,sans-serif;cursor:pointer}.pv-dn{color:#8a3a12}
 .ta-open{display:none;margin-top:8px;border:1px solid #4b2e83;background:#fff;color:#4b2e83;border-radius:12px;padding:2px 11px;font:600 12px 'Open Sans',Arial,sans-serif;cursor:pointer}.ta-open:hover{background:#e8e3d3}
 .ta-shade{padding-top:40px}.ta-dlg{width:min(1180px,calc(100vw - 40px));font-size:13px}.ta-body{padding:12px 20px 12px;max-height:calc(100vh - 150px);overflow:auto}
 .ta-loads{color:#555;display:flex;gap:6px 14px;flex-wrap:wrap;margin-bottom:8px}.ta-loads b{color:#4b2e83}
@@ -410,7 +410,7 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
             ui: { genEds: $(".gened-filter:checked").map(function(){ return this.value; }).get(), excludedSections: excludedSections.slice(), excludedInstructors: excludedInstructors.slice(),
                 table: dataTable ? { order: dataTable.order(), search: dataTable.search(), length: dataTable.page.len() } : null,
                 timeSeries: $("#ts-toggle").is(":checked"), tsSelected: $("#ts-course-select").val() || [], tsExcludedInstructors: tsExcludedInstructors.slice(),
-                excludedCourses: excludedCourses.slice(), view: viewMode, year: pvYear, summer: pvSummer, tsMode: tsMode, sequences: customSeqs, seq: pvSeq, seqCompare: seqCmp } };
+                excludedCourses: excludedCourses.slice(), view: viewMode, year: pvYear, summer: pvSummer, tsMode: tsMode, sequences: customSeqs, seq: pvSeq, seqWindow: seqWin } };
     }
     /* The snapshot file: this page's own source with the data in #tsv-snapshot, and its suggested file name. */
     function snapshotFile(note, withHistory){
@@ -525,6 +525,8 @@ FUNCTIONS = r"""    /* ---- TA estimate ----
             tsDataCache[currQuarterId + "_" + p] = rawData.filter(function(d){ return d.prefix === p; });
             histQuarters.forEach(function(hq){ const key = hq.str + "_" + p; if(hq.str !== currQuarterId) tsDataCache[key] = s.history ? (s.history[key] || []) : []; });
         });
+        /* Pages older than the time series' (Sequences reaches back twenty years). */
+        Object.keys(s.history || {}).forEach(function(k){ if(!(k in tsDataCache)) tsDataCache[k] = s.history[k]; });
         document.body.classList.add("tsv-snapshot");
         document.title = "Snapshot " + s.quarter + " " + s.prefixes.join(" ") + (s.note ? " · " + s.note : "");
         $(".dashboard-header p").text(s.quarter + " | Excludes 500+ level, 99s, and Honors.");
@@ -727,13 +729,6 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
             + "</tbody></table><div class='pv-col pv-sdetail'>" + (sel && sel.state === "ok" ? quarterBlock(sel, "pv-chart-sum") : "<div class='pv-na pv-big-na'>" + (list.some(function(st){ return st.state === "loading"; }) ? "Loading…" : "No summer sections") + "</div>") + "</div></div>");
         if(sel && sel.state === "ok") drawScatter("pv-chart-sum", sel.rows);
     }
-    function neededQuarters(){
-        const ids = [];
-        if(viewMode === "year") YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, pvYear)); });
-        if(viewMode === "decade") for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, ay)); });
-        if(viewMode === "summers") for(let y = NEWEST_SUMMER; y > NEWEST_SUMMER - 10; y--) ids.push("SUM" + y);
-        return ids;
-    }
     function isPeriodView(){ return viewMode === "year" || viewMode === "decade" || viewMode === "summers" || viewMode === "sequences"; }
     function drawPeriod(){
         if(!activePrefixes.length){ $("#period-view").html("<div class='pv-na pv-big-na'>Add a prefix above to see " + (viewMode === "summers" ? "its summers" : viewMode === "year" ? "a year" : viewMode === "sequences" ? "its course sequences" : "a decade") + ".</div>"); return; }
@@ -758,12 +753,25 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
             { name: "Upper division", courses: ["300", "381", "394", "403", "407"], note: "The fastest-growing 300- and 400-level courses" }] }
     };
     let pvSeq = null;
-    /* The two academic years the tiles compare; null is the default (the latest full year, and the oldest shown). Kept in
-       this browser, and in a snapshot. */
-    let seqCmp = (function(){ if(SNAPSHOT) return ((SNAPSHOT.ui || {}).seqCompare) || { now: null, then: null }; try { return JSON.parse(localStorage.getItem("tsmod-seq-compare") || "null") || { now: null, then: null }; } catch(e){ return { now: null, then: null }; } })();
+    /* The academic years shown, picked on a timeline as in MyGradMod: { from, to }, or null for the last ten. It reaches back
+       twenty years; the tiles compare the newest and oldest whole years shown. Kept in this browser, and in a snapshot. */
+    const SEQ_REACH = 20;
+    let seqWin = (function(){ if(SNAPSHOT) return (SNAPSHOT.ui || {}).seqWindow || null; try { return JSON.parse(localStorage.getItem("tsmod-seq-window") || "null"); } catch(e){ return null; } })();
     let customSeqs = (function(){ if(SNAPSHOT) return ((SNAPSHOT.ui || {}).sequences) || {}; try { return JSON.parse(localStorage.getItem("tsmod-sequences") || "{}") || {}; } catch(e){ return {}; } })();
     function saveSeqs(){ if(SNAPSHOT) return; try { localStorage.setItem("tsmod-sequences", JSON.stringify(customSeqs)); } catch(e){} }
-    function seqYears(){ const out = []; for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) out.push(ay); return out; }
+    /* The timeline's years, newest first: twenty, or in a snapshot the ones it saved. */
+    function seqStops(){
+        const out = [];
+        for(let ay = NEWEST_AY; ay > NEWEST_AY - SEQ_REACH; ay--) if(!SNAPSHOT || ay > NEWEST_AY - 10 || YEAR_QTRS.some(function(q){ return activePrefixes.some(function(p){ return (qOfYear(q, ay) + "_" + p) in tsDataCache; }); })) out.push(ay);
+        return out;
+    }
+    function seqBounds(){
+        const stops = seqStops(), clamp = function(y){ return Math.max(stops[stops.length - 1], Math.min(stops[0], y)); };
+        const r = seqWin && typeof seqWin.from === "number" && typeof seqWin.to === "number" ? seqWin : { from: NEWEST_AY - 9, to: NEWEST_AY };
+        return [clamp(Math.min(r.from, r.to)), clamp(Math.max(r.from, r.to))];
+    }
+    /* The years shown, newest first. */
+    function seqYears(){ const b = seqBounds(); return seqStops().filter(function(ay){ return ay >= b[0] && ay <= b[1]; }); }
     function titleCase(t){ return String(t).toLowerCase().replace(/(^|\s)([a-z])/g, function(m, a, b){ return a + b.toUpperCase(); }).replace(/\s(And|Of|In|With|For|To|The)\b/g, function(m){ return m.toLowerCase(); })
         .replace(/\b(Ii|Iii|Iv|Vi|Vii)\b/g, function(m){ return m.toUpperCase(); }); }
     /* One prefix's lecture (or quiz) rows for a quarter; null while its page isn't read yet. */
@@ -798,9 +806,12 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
             name: ok.length ? ok[ok.length - 1].name : "", from: old ? old.from : null };
     }
     /* Sequences found from course titles, and the courses whose largest section grew most. */
+    const detected = {};
     function detectSeqs(p){
+        const read = Object.keys(tsDataCache).length;
+        if(detected[p] && detected[p].read === read) return detected[p].lists;
         const pre = SEQ_PRESETS[p], titles = {}, total = {};
-        seqYears().forEach(function(ay){ YEAR_QTRS.forEach(function(q){ (seqRows(qOfYear(q, ay), p) || []).forEach(function(d){ titles[d.number] = d.name; total[d.number] = (total[d.number] || 0) + d.enrl; }); }); });
+        seqStops().forEach(function(ay){ YEAR_QTRS.forEach(function(q){ (seqRows(qOfYear(q, ay), p) || []).forEach(function(d){ titles[d.number] = d.name; total[d.number] = (total[d.number] || 0) + d.enrl; }); }); });
         const groups = {}, out = [];
         Object.keys(titles).forEach(function(num){
             const m = String(titles[num]).toUpperCase().match(/^(.*?\S)[\s,:-]+(I{1,3}|IV|VI{0,3}|[1-6]|[A-D])$/);
@@ -812,7 +823,7 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
             out.push({ name: titleCase(k.split("|")[1]), flow: true, courses: nums, total: nums.reduce(function(t, n){ return t + (total[n] || 0); }, 0), note: "Found from course titles: " + k.split("|")[1] + " I, II…" });
         });
         out.sort(function(a, b){ return b.total - a.total; });
-        const years = seqYears(), grew = [];
+        const years = seqStops(), grew = [];
         Object.keys(titles).forEach(function(num){
             const ys = years.map(function(ay){ return seqYear(p, num, ay, pre ? pre.alias : null); }).filter(function(y){ return y.offered && y.full; });
             if(ys.length < 2) return;
@@ -821,7 +832,8 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
         });
         grew.sort(function(a, b){ return b.by - a.by || a.num.localeCompare(b.num); });
         const lists = out.slice(0, 6);
-        if(grew.length) lists.push({ name: "Section-size growth", courses: grew.slice(0, 5).map(function(g){ return g.num; }).sort(), note: "The courses whose largest lecture section grew most over the years shown" });
+        if(grew.length) lists.push({ name: "Section-size growth", courses: grew.slice(0, 5).map(function(g){ return g.num; }).sort(), note: "The courses whose largest lecture section grew most over the years read" });
+        detected[p] = { read: read, lists: lists };
         return lists;
     }
     function seqLists(){
@@ -852,14 +864,9 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
         pvSeq = cur.id;
         const years = seqYears(), many = activePrefixes.length > 1;
         const cols = cur.courses.map(function(num){ return { num: num, ys: years.map(function(ay){ return seqYear(cur.prefix, num, ay, cur.alias); }) }; });
-        /* The years the tiles compare: the ones picked, or the latest full year with the sequence in it and the oldest full
-           year shown. Only years with all three quarters published can be picked. */
-        const pickable = years.map(function(ay, i){ return cols.every(function(c){ return c.ys[i].full; }) && cols.some(function(c){ return c.ys[i].offered; }); });
-        const latestIdx = pickable.indexOf(true), oldestIdx = pickable.lastIndexOf(true);
-        const picked = function(ay, dflt){ const i = years.indexOf(ay); return ay !== null && i !== -1 && pickable[i] ? i : dflt; };
-        let nowIdx = picked(seqCmp.now, latestIdx), baseIdx = picked(seqCmp.then, oldestIdx === latestIdx ? -1 : oldestIdx);
-        if(baseIdx !== -1 && baseIdx < nowIdx){ const t = nowIdx; nowIdx = baseIdx; baseIdx = t; }
-        if(baseIdx === nowIdx) baseIdx = -1;
+        /* The tiles compare the newest and oldest whole years shown (all three quarters published, the sequence taught). */
+        const whole = years.map(function(ay, i){ return cols.every(function(c){ return c.ys[i].full; }) && cols.some(function(c){ return c.ys[i].offered; }); });
+        const nowIdx = whole.indexOf(true), oldestIdx = whole.lastIndexOf(true), baseIdx = oldestIdx === nowIdx ? -1 : oldestIdx;
         const nowAy = nowIdx === -1 ? null : years[nowIdx], baseAy = baseIdx === -1 ? null : years[baseIdx];
         const tiles = cols.map(function(c){
             const now = nowIdx === -1 ? null : c.ys[nowIdx], base = baseIdx === -1 ? null : c.ys[baseIdx];
@@ -899,11 +906,12 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
                 + cols.map(function(c, i){ return cell(c.ys[r], i); }).join("")
                 + (anyLoading && !sum ? "<td class='pv-cell pv-na'>Loading…</td>" : "<td class='pv-cell sq-cell'><div class='pc-big'><b>" + fmtN(sum) + "</b> students</div></td>") + "</tr>";
         });
-        $("#period-view").html(seqChips(lists, cur)
-            + "<div class='pv-head'>" + (latestIdx === -1 ? "" : "<label class='sq-cmp-pick' title='The two years the tiles compare. Only years with Autumn, Winter and Spring all published.'>Compare "
-                + "<select id='sq-now' aria-label='Compare this year'><option value=''>Latest (" + ayLabel(years[latestIdx]) + ")</option>" + years.filter(function(ay, i){ return pickable[i]; }).map(function(ay){ return "<option value='" + ay + "'" + (seqCmp.now === ay ? " selected" : "") + ">" + ayLabel(ay) + "</option>"; }).join("") + "</select>"
-                + " with <select id='sq-then' aria-label='with this year'><option value=''>Oldest shown (" + ayLabel(years[oldestIdx]) + ")</option>" + years.filter(function(ay, i){ return pickable[i]; }).map(function(ay){ return "<option value='" + ay + "'" + (seqCmp.then === ay ? " selected" : "") + ">" + ayLabel(ay) + "</option>"; }).join("") + "</select></label>")
-                + "<span class='pv-hint'>" + snapEsc((cur.note ? cur.note + ". " : "") + (cur.kind === "built-in" ? "From " + cur.source + "." : cur.kind === "found" ? "" : "") + " Lecture sections’ students, as the Time Schedule shows them; summer left out.") + "</span></div>"
+        if(!$("#period-view #sq-slider").length) $("#period-view").html("<div id='sq-top'></div><div class='sq-timeline'><span>Years</span>"
+            + "<div id='sq-slider' role='group' aria-label='Academic years shown' title='Drag a dot, or drag the stretch between them. Double-click for the last ten years. The tiles compare the newest and oldest whole years shown.'></div><span id='sq-count'></span></div><div id='sq-body'></div>");
+        $("#sq-top").html(seqChips(lists, cur));
+        drawSeqSlider();
+        $("#sq-count").text(plural(years.length, "year"));
+        $("#sq-body").html("<div class='pv-head'><span class='pv-hint'>" + snapEsc((cur.note ? cur.note + ". " : "") + (cur.kind === "built-in" ? "From " + cur.source + "." : cur.kind === "found" ? "" : "") + " Lecture sections’ students, as the Time Schedule shows them; summer left out.") + "</span></div>"
             + strip
             + "<table class='pv-table sq-table'><thead><tr><th>Academic year<span>Students in the year, then Aut · Win · Spr; the largest lecture and quiz section</span></th>" + cols.map(function(c){ const nm = (c.ys.filter(function(y){ return y.name; })[0] || {}).name || "";
                 return "<th title='" + snapEsc(titleCase(nm)) + "'>" + snapEsc(cur.prefix + " " + c.num) + "<span>" + snapEsc(titleCase(nm)) + "</span></th>"; }).join("") + "<th class='pv-tot'>" + (cur.flow ? "Sequence" : "All") + "</th></tr></thead><tbody>" + body + "</tbody></table>");
@@ -919,11 +927,92 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
                 + "<button type='submit' class='sq-chip on'>Save</button><button type='button' class='sq-chip sq-cancel'>Cancel</button><span class='sq-err'></span></form>");
     }
     $(document).on("click", ".sq-chip[data-seq]", function(){ pvSeq = $(this).attr("data-seq"); drawSequences(); });
-    $(document).on("change", "#sq-now, #sq-then", function(){
-        seqCmp[this.id === "sq-now" ? "now" : "then"] = this.value ? +this.value : null;
-        if(!SNAPSHOT) try { localStorage.setItem("tsmod-seq-compare", JSON.stringify(seqCmp)); } catch(e){}
-        drawSequences();
+    /* The timeline, as MyGradMod's Entering classes slider: newest on the left. Lavender years are whole; a year whose Winter
+       or Spring isn't published yet is gray. */
+    function nearestStop(stops, y){ let best = 0; stops.forEach(function(s, i){ if(Math.abs(s - y) < Math.abs(stops[best] - y)) best = i; }); return best; }
+    /* The selection as stop indexes: a = the newer end (left), b = the older end (right). */
+    function seqSel(){ const stops = seqStops(), r = seqBounds(); return { stops: stops, a: nearestStop(stops, r[1]), b: nearestStop(stops, r[0]) }; }
+    function drawSeqSlider(){
+        const el = document.getElementById("sq-slider");
+        if(!el) return;
+        const sel = seqSel(), stops = sel.stops, last = stops.length - 1, W = el.offsetWidth || 600;
+        const pos = function(i){ return last ? i / last * 100 : 0; };
+        const whole = function(ay){ return YEAR_QTRS.every(function(q){ return qIndex(qOfYear(q, ay)) <= qIndex(currQuarterId); }); };
+        const piece = function(from, to, cls, title){ return to > from ? "<i class='sl-seg" + cls + "' style='left:" + from + "%;width:calc(" + (to - from) + "% + 1px)'" + (title ? " title='" + title + "'" : "") + "></i>" : ""; };
+        let out = "";
+        for(let i = 0; i <= last; i++){
+            const p = pos(i), L = i === 0 ? 0 : (pos(i - 1) + p) / 2, R = i === last ? 100 : (p + pos(i + 1)) / 2;
+            const cls = whole(stops[i]) ? "" : " hist", title = whole(stops[i]) ? "" : ayLabel(stops[i]) + ": Winter and Spring not published yet";
+            out += piece(L, p, cls + (i > sel.a && i <= sel.b ? " sel" : ""), title) + piece(p, R, cls + (i >= sel.a && i < sel.b ? " sel" : ""), title);
+        }
+        const near = (sel.b - sel.a) / (last || 1) * W < 130;
+        const label = function(at, text, cls){ return "<span class='sl-lab" + (cls ? " " + cls : "") + "' style='left:" + at + "%'>" + text + "</span>"; };
+        if(near) out += label((pos(sel.a) + pos(sel.b)) / 2, ayLabel(stops[sel.a]) + (sel.a === sel.b ? "" : " · " + ayLabel(stops[sel.b])));
+        else out += label(pos(sel.a), ayLabel(stops[sel.a])) + label(pos(sel.b), ayLabel(stops[sel.b]));
+        if(sel.a > 0 && pos(sel.a) / 100 * W > 100) out += label(0, ayLabel(stops[0]), "sl-end");
+        if(sel.b < last && (100 - pos(sel.b)) / 100 * W > 100) out += label(100, ayLabel(stops[last]), "sl-end");
+        [["a", "Newest year shown"], ["b", "Oldest year shown"]].forEach(function(d){
+            const i = sel[d[0]];
+            out += "<button type='button' class='sl-dot' data-end='" + d[0] + "' role='slider' aria-label='" + d[1] + "' aria-valuetext='" + ayLabel(stops[i]) + "' style='left:" + pos(i) + "%'></button>";
+        });
+        el.innerHTML = out;
+    }
+    function setSeqWin(r, save){
+        seqWin = r;
+        if(!save) return drawSequences();
+        if(!SNAPSHOT) try { localStorage.setItem("tsmod-seq-window", JSON.stringify(seqWin)); } catch(e){}
+        renderPeriod();
+    }
+    function setSeqSel(stops, a, b, save){ setSeqWin({ from: stops[b], to: stops[a] }, save); }
+    /* Drag a dot (a year per step); drag the stretch between the dots to slide it; a click moves the older end (the newer end
+       only when the click is newer than both); double-click goes back to the last ten years. */
+    let seqSlide = null, seqPress = { t: 0, x: 0 };
+    function seqIndex(e, last){ const box = document.getElementById("sq-slider").getBoundingClientRect(); return last ? Math.max(0, Math.min(last, Math.round((e.clientX - box.left) / box.width * last))) : 0; }
+    document.addEventListener("pointerdown", function(e){
+        const slider = e.target.closest && e.target.closest("#sq-slider");
+        if(!slider) return;
+        e.preventDefault();
+        /* A double-click is two quick presses in one spot (the slider redraws between them, so no dblclick event fires). */
+        const quick = e.timeStamp - seqPress.t < 450 && Math.abs(e.clientX - seqPress.x) < 8;
+        seqPress = { t: quick ? 0 : e.timeStamp, x: e.clientX };
+        if(quick){ seqSlide = null; return setSeqWin(null, true); }
+        const s = seqSel(), t = seqIndex(e, s.stops.length - 1), dot = e.target.closest(".sl-dot");
+        slider.setPointerCapture(e.pointerId);
+        if(dot) seqSlide = { mode: s.a === s.b ? "either" : dot.getAttribute("data-end") };
+        else if(t >= s.a && t <= s.b) seqSlide = { mode: "span", t0: t, x0: e.clientX, a0: s.a, b0: s.b };
+        else if(t > s.b){ seqSlide = { mode: "b" }; setSeqSel(s.stops, s.a, t); }
+        else { seqSlide = { mode: "a" }; setSeqSel(s.stops, t, s.b); }
     });
+    document.addEventListener("pointermove", function(e){
+        if(!seqSlide || !document.getElementById("sq-slider")) return;
+        const s = seqSel(), last = s.stops.length - 1, t = seqIndex(e, last);
+        if(seqSlide.mode === "either" && t !== s.a) seqSlide.mode = t < s.a ? "a" : "b";
+        if(seqSlide.mode === "span" && Math.abs(e.clientX - seqSlide.x0) > 4) seqSlide.mode = "pan";
+        if(seqSlide.mode === "a" && Math.min(t, s.b) !== s.a) setSeqSel(s.stops, Math.min(t, s.b), s.b);
+        else if(seqSlide.mode === "b" && Math.max(t, s.a) !== s.b) setSeqSel(s.stops, s.a, Math.max(t, s.a));
+        else if(seqSlide.mode === "pan"){
+            const shift = Math.max(-seqSlide.a0, Math.min(last - seqSlide.b0, t - seqSlide.t0));
+            if(seqSlide.a0 + shift !== s.a) setSeqSel(s.stops, seqSlide.a0 + shift, seqSlide.b0 + shift);
+        }
+    });
+    document.addEventListener("pointerup", function(){
+        if(!seqSlide) return;
+        const m = seqSlide, s = seqSel();
+        seqSlide = null;
+        if(m.mode === "span") return setSeqSel(s.stops, s.a, Math.max(s.a, m.t0), true);
+        setSeqWin(seqWin, true);
+    });
+    document.addEventListener("keydown", function(e){
+        const dot = e.target.closest && e.target.closest("#sq-slider .sl-dot"), step = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 }[e.key];
+        if(!dot || !step) return;
+        e.preventDefault();
+        const s = seqSel(), end = dot.getAttribute("data-end"), last = s.stops.length - 1;
+        if(end === "a") setSeqSel(s.stops, Math.max(0, Math.min(s.b, s.a + step)), s.b, true);
+        else setSeqSel(s.stops, s.a, Math.max(s.a, Math.min(last, s.b + step)), true);
+        const again = document.querySelector("#sq-slider .sl-dot[data-end='" + end + "']");
+        if(again) again.focus();
+    });
+    $(window).on("resize", function(){ if(viewMode === "sequences") drawSeqSlider(); });
     $(document).on("click", ".sq-add", function(){ $(".sq-form").prop("hidden", false); $(this).attr("aria-expanded", "true"); $("#sq-courses").focus(); });
     $(document).on("click", ".sq-cancel", function(){ $(".sq-form").prop("hidden", true); $(".sq-add").attr("aria-expanded", "false"); });
     $(document).on("click", ".sq-del", function(){
@@ -969,7 +1058,8 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
     function neededQuarters(){
         const ids = [];
         if(viewMode === "year") YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, pvYear)); });
-        if(viewMode === "decade" || viewMode === "sequences") for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, ay)); });
+        if(viewMode === "decade") for(let ay = NEWEST_AY; ay > NEWEST_AY - 10; ay--) YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, ay)); });
+        if(viewMode === "sequences") seqYears().forEach(function(ay){ YEAR_QTRS.forEach(function(q){ ids.push(qOfYear(q, ay)); }); });
         if(viewMode === "summers") for(let y = NEWEST_SUMMER; y > NEWEST_SUMMER - 10; y--) ids.push("SUM" + y);
         if(isSeriesView()) return tsQuarterIds();
         return ids;
@@ -981,15 +1071,22 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
     }
     function startBackground(){
         if(SNAPSHOT) return;
-        wantedQuarters().forEach(function(id){
+        const needed = neededQuarters(), first = [], later = [];
+        needed.concat(wantedQuarters()).forEach(function(id, i){
+            const need = i < needed.length;
             activePrefixes.forEach(function(p){
                 const key = id + "_" + p;
-                if(key in tsDataCache || bgQueued[key]) return;
-                bgQueued[key] = true;
-                bg.queue.push({ id: id, p: p, key: key });
-                bg.total++;
+                if(key in tsDataCache) return;
+                if(bgQueued[key]){
+                    /* Already queued: moved up if the view needs it now, unless it's being read. */
+                    const at = need ? bg.queue.findIndex(function(t){ return t.key === key; }) : -1;
+                    if(at === -1) return;
+                    bg.queue.splice(at, 1);
+                } else { bgQueued[key] = true; bg.total++; }
+                (need ? first : later).push({ id: id, p: p, key: key });
             });
         });
+        bg.queue = first.concat(bg.queue, later);
         while(bg.running < 2 && bg.queue.length) runBackground();
     }
     let bgTimer = null, lastActivity = 0;
@@ -1031,7 +1128,7 @@ PERIOD = r"""    /* ---- Year, Decade and Summers ----
     }
     function showProgress(){
         $("#bg-progress").css("display", "flex").find(".pv-fill").css("width", (bg.total ? bg.done / bg.total * 100 : 0) + "%");
-        $("#bg-status").text("Reading the last ten years from the Time Schedule: " + bg.done + " of " + bg.total + " pages");
+        $("#bg-status").text((viewMode === "sequences" && seqBounds()[0] <= NEWEST_AY - 10 ? "Reading earlier years" : "Reading the last ten years") + " from the Time Schedule: " + bg.done + " of " + bg.total + " pages");
     }
     function renderPeriod(){
         const waiting = !SNAPSHOT && missingFor(neededQuarters()).length > 0;

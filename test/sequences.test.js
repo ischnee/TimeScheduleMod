@@ -39,27 +39,43 @@ module.exports = async (check, port) => {
     check('MATH 208’s largest section, now and then (as 308)', tiles[5].includes('Largest section ' + big208now + ' (was ' + big208then + ')'), { tile: tiles[5], big208now, big208then });
     check('flow arrows between the courses', await d.evaluate('$(".sq-arrow").length') === 5);
 
-    /* Picking the years the tiles compare. */
-    const pick = (id, v) => d.evaluate(`$("#${id}").val(${JSON.stringify(String(v))}).trigger("change")`);
+    /* The timeline, as in MyGradMod: twenty years, the last ten shown at first. */
+    const sl = () => d.evaluate('({ count: $("#sq-count").text(), labels: $("#sq-slider .sl-lab").map(function(){ return this.textContent + (this.classList.contains("sl-end") ? "*" : ""); }).get().join(), rows: $(".sq-table tbody tr").length, marked: $(".sq-table tr.sq-cmp th").map(function(){ return this.childNodes[0].textContent; }).get().join() })');
     const strip = () => d.evaluate('$(".sq-tile").map(function(){ return this.innerText.replace(/\\s+/g, " "); }).get()');
-    const marked = () => d.evaluate('$(".sq-table tr.sq-cmp th").map(function(){ return this.childNodes[0].textContent; }).get().join()');
-    check('by default: the latest full year and the oldest shown, both marked in the grid', (await d.evaluate('$("#sq-now option:selected").text() + " | " + $("#sq-then option:selected").text()')) === 'Latest (2025–26) | Oldest shown (2017–18)' && (await marked()) === '2025–26,2017–18', await marked());
-    check('only whole years can be picked', (await d.evaluate('$("#sq-now option").map(function(){ return this.value; }).get().join()')) === ',2025,2024,2023,2022,2021,2020,2019,2018,2017');
-    await pick('sq-then', 2021);
+    const at = i => d.evaluate(`(() => { const s = document.getElementById("sq-slider"); s.scrollIntoView({ block: "center" }); const b = s.getBoundingClientRect(); return { x: b.left + b.width * ${i} / 19, y: b.top + 17 }; })()`);
+    const mouse = (type, p, buttons) => d.send('Input.dispatchMouseEvent', { type, x: p.x, y: p.y, button: 'left', buttons, clickCount: 1 });
+    const drag = async (i, j) => { const a = await at(i), b = await at(j); await mouse('mousePressed', a, 1); for (let k = 1; k <= 6; k++) await mouse('mouseMoved', { x: a.x + (b.x - a.x) * k / 6, y: a.y }, 1); await mouse('mouseReleased', b, 0); await sleep(300); };
+    const settled = () => d.waitFor('$("#bg-progress").is(":hidden") && !/Loading…/.test($("#period-view").text())', 600);
+    let w = await sl();
+    check('the timeline: the last ten years shown of twenty, and the tiles’ two years marked', w.count === '10 years' && w.labels === '2026–27,2017–18,2007–08*' && w.rows === 10 && w.marked === '2025–26,2017–18', w);
+    check('a year without Winter and Spring yet is gray, and says why', await d.evaluate('$("#sq-slider .sl-seg.hist").first().attr("title")') === '2026–27: Winter and Spring not published yet');
+    await drag(9, 19);
+    check('dragging the older end back: the earlier years are read', await d.evaluate('$("#bg-progress").is(":visible") && /^Reading earlier years from the Time Schedule: \\d+ of \\d+ pages$/.test($("#bg-status").text())'), await d.evaluate('$("#bg-status").text()'));
+    await settled();
+    await sleep(300);
+    w = await sl();
     let t = await strip();
-    const ch124b = Math.round((yearTotal(2025, ['124']) / yearTotal(2021, ['124']) - 1) * 100);
-    const all6 = ['120', '124', '125', '126', '207', '208'], chAll = Math.round((yearTotal(2025, all6) / yearTotal(2021, all6) - 1) * 100);
-    check('compared with 2021–22: each tile and the total', t[1].includes((ch124b > 0 ? '+' : '') + ch124b + '% since 2021–22') && t[6].includes((chAll > 0 ? '+' : '') + chAll + '% since 2021–22') && (await marked()) === '2025–26,2021–22', { t1: t[1], t6: t[6], ch124b, chAll });
-    await pick('sq-now', 2023);
+    const ch124t = Math.round((yearTotal(2025, ['124']) / yearTotal(2007, ['124']) - 1) * 100), ch207 = Math.round((yearTotal(2025, ['207']) / yearTotal(2007, ['307']) - 1) * 100);
+    check('twenty years: every tile compares with 2007–08', w.count === '20 years' && w.rows === 20 && w.marked === '2025–26,2007–08' && t[1].includes((ch124t > 0 ? '+' : '') + ch124t + '% since 2007–08') && t[4].includes((ch207 > 0 ? '+' : '') + ch207 + '% since 2007–08'), { w, t1: t[1], t4: t[4], ch124t, ch207 });
+    check('2007–08’s MATH 207 is MATH 307', /as MATH 307/.test(await d.evaluate('$(".sq-table tbody tr").last().find("td").eq(4).text()')));
+    check('the window is kept in this browser', (await d.evaluate('localStorage.getItem("tsmod-seq-window")')) === '{"from":2007,"to":2026}');
+    await d.evaluate('$("#sq-slider .sl-dot[data-end=a]")[0].focus()');
+    for (let k = 0; k < 3; k++) await d.key('ArrowRight', 'ArrowRight', 39);
+    w = await sl();
     t = await strip();
-    const ch124c = Math.round((yearTotal(2023, ['124']) / yearTotal(2021, ['124']) - 1) * 100);
-    check('2023–24 against 2021–22', t[1].includes(fmt(yearTotal(2023, ['124'])) + ' students') && t[1].includes((ch124c > 0 ? '+' : '') + ch124c + '% since 2021–22') && t[6].includes('2023–24'), { t1: t[1], ch124c });
-    check('the choice is kept in this browser', (await d.evaluate('localStorage.getItem("tsmod-seq-compare")')) === '{"now":2023,"then":2021}');
-    await pick('sq-then', 2024);
-    check('a later year picked as the base: the two swap', (await strip())[1].includes('since 2023–24') && (await marked()) === '2024–25,2023–24', await marked());
-    await pick('sq-now', '');
-    await pick('sq-then', '');
-    check('back to the defaults', (await strip())[1].includes('since 2017–18') && (await d.evaluate('localStorage.getItem("tsmod-seq-compare")')) === '{"now":null,"then":null}');
+    check('arrow keys move a dot a year at a time: 2023–24 against 2007–08', w.count === '17 years' && w.marked === '2023–24,2007–08' && t[1].includes(fmt(yearTotal(2023, ['124'])) + ' students') && await d.evaluate('document.activeElement.getAttribute("data-end") === "a"'), { w, t1: t[1] });
+    await drag(10, 8);
+    w = await sl();
+    check('dragging the stretch slides the window: 2025–26 to 2009–10', w.count === '17 years' && w.labels.startsWith('2025–26,2009–10') && w.marked === '2025–26,2009–10', w);
+    await drag(0, 0);
+    w = await sl();
+    check('a click newer than both ends moves the newer end', w.count === '18 years' && w.labels.startsWith('2026–27,2009–10') && w.marked === '2025–26,2009–10', w);
+    const p5 = await at(5);
+    for (const type of ['mousePressed', 'mouseReleased', 'mousePressed', 'mouseReleased']) await mouse(type, p5, type === 'mousePressed' ? 1 : 0);
+    await sleep(300);
+    await settled();
+    w = await sl();
+    check('a double-click goes back to the last ten years', w.count === '10 years' && w.marked === '2025–26,2017–18' && (await d.evaluate('localStorage.getItem("tsmod-seq-window")')) === 'null', w);
 
     await d.click('.sq-chip[data-seq*="Discrete Mathematical Modeling"]');
     check('found from titles: DISCRETE MATHEMATICAL MODELING I and II', (await d.evaluate('$(".sq-table thead th").map(function(){ return this.childNodes[0].textContent; }).get().join("|")')) === 'Academic year|MATH 381|MATH 382|Sequence');
@@ -74,6 +90,22 @@ module.exports = async (check, port) => {
       === 'Probability path | Academic year|MATH 300|MATH 394|Sequence | {"MATH":[{"name":"Probability path","courses":["300","394"]}]}');
     await d.click('.sq-del');
     check('× removes it', !(await d.evaluate(`$(".sq-chips .sq-chip").text()`)).includes('Probability path') && (await d.evaluate('localStorage.getItem("tsmod-sequences")')) === '{"MATH":[]}');
+    /* A snapshot keeps the window and the older years it shows. */
+    await d.click('.sq-chip[data-seq$=":built-in:0"]');
+    await d.evaluate('$("#sq-slider .sl-dot[data-end=b]")[0].focus()');
+    for (let k = 0; k < 4; k++) await d.key('ArrowRight', 'ArrowRight', 39);
+    await settled();
+    const wide = await sl();
+    await d.evaluate('window.showSaveFilePicker = undefined');
+    await d.click('#snap-save');
+    await d.evaluate('$("#snap-history").prop("checked", true).trigger("change")');
+    await d.click('.snap-save');
+    const file = await d.downloaded();
+    await d.openFile(file);
+    await d.waitFor('$("#sq-slider").length > 0', 100);
+    await sleep(500);
+    const reopened = await sl();
+    check('a snapshot keeps the window, and the older years’ numbers', wide.count === '14 years' && JSON.stringify(reopened) === JSON.stringify(wide) && /students/.test(await d.evaluate('$(".sq-table tbody tr").last().find("td").eq(1).text()')), { wide, reopened });
     if (process.env.SHOT) {
       await d.click('.sq-chip[data-seq$=":built-in:0"]');
       await d.evaluate('window.scrollTo(0, 0)');
